@@ -1,0 +1,12 @@
+Goal: Create a chess program that allows for human vs. human, ai vs. human, and ai vs. ai
+
+* Chess program uses a visual 2d interface with a chess board and images of chess pieces. Movement done through clicking.
+* First thing that should be done is GUI interface and chess code so that human vs. human is possible.
+* AI. Could use AB Pruning, and for its strategy we can use machine learning & genetic algorithms to pit different ais (each ai has a different heuristic function) against each other, and the winners get a higher chance of being put in a breeding pool for the next generation. The genetic algorithm may not apply normally to this use case.
+* Use clusters in order to speed things up. Run multiple instances of the chess ai, and so we could run the AI at higher depths.
+* At the beginning of the program, the player can select human vs human, ai vs human, or ai vs ai. When selecting the AI, the user can also select the search depth.
+* Also, the player should select who's black and who's white.
+* If the AI is good enough, we could pit it against a good chess player to see how well it can do.
+* Programmed in Python.
+* Document the code well.
+* Not gonna use pivotal tracker since it's just the two of us. More effort than it's worth.
