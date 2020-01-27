@@ -10,3 +10,20 @@ Goal: Create a chess program that allows for human vs. human, ai vs. human, and 
 * Programmed in Python.
 * Document the code well.
 * Not gonna use pivotal tracker since it's just the two of us. More effort than it's worth.
+
+The Board
+* Use rectangle images to form the chess board. Instead of black squares, use light grey so black pieces don't blend in with them.
+* Function to change color of rectangles. Idea is that when you click on chess piece, the squares they can move to light up, and then you click on those to move the chess piece. Updating individual squares can be done with the blit method. If a chess piece is on a square that needs to be changed, we'll first have to blit the square, then blit the chess piece afterwards so it'll appear over the square.
+
+Playing the game
+* Undo button
+* Unusual chess moves
+	* Castling
+	* En passent
+	* Choose which piece a pawn turns into when it reaches the other side. (Promotion)
+
+AI
+* Determining value of board state:
+	* Total poiht value of all its pieces vs the total point value of its opponent's pieces (Chess piece values can be considered complex; look at https://chess.stackexchange.com/questions/2409/how-many-points-is-each-chess-piece-worth for more information)
+	* End board states are heavily weighted so the ai will always go for them (if it's a win state) or away from them (if it's a lose state)
+	* Number of possible moves it can make add value
