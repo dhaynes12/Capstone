@@ -27,3 +27,4 @@ AI
 	* Total poiht value of all its pieces vs the total point value of its opponent's pieces (Chess piece values can be considered complex; look at https://chess.stackexchange.com/questions/2409/how-many-points-is-each-chess-piece-worth for more information)
 	* End board states are heavily weighted so the ai will always go for them (if it's a win state) or away from them (if it's a lose state)
 	* Number of possible moves it can make add value
+* AI's move determination should be put in a separate thread to allow for user input while it's thinking
