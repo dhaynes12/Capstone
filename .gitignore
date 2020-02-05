@@ -4,3 +4,5 @@
 
 /.vs/Capstone/v15/.suo
 /.vs
+
+__pycache__/

@@ -9,6 +9,14 @@ CASTLE = 0
 EN_PASSENT = 1
 NON_CAPTURE = 2
 
+"""Piece Values"""
+PAWN_VAL = 1
+KNIGHT_VAL = 3
+BISHOP_VAL = 3.5
+ROOK_VAL = 7
+QUEEN_VAL = 9
+KING_VAL = 0
+
 """Returns a space that's a number of horizontal and vertical moves away from the given space.
 
    space - A tuple of x and y coordinates which represents one of the spaces
@@ -25,10 +33,10 @@ def moveSpace(space, move):
 def isOccupiedBy(board, space, move):
     look = moveSpace(space, move)
     
-    if (look(0) > 7 or look(1) > 7 or look(0) < 0 or look(1) < 0):
+    if (look[0] > 7 or look[1] > 7 or look[0] < 0 or look[1] < 0):
         return None
     
-    return board[look(0)][look(1)]
+    return board[look[0]][look[1]]
 
 """Returns the pieces/empties occupying a line of spaces that point in a direction specified by xIncrease and yIncrease.
    This line ends at the edge of the board, just before an allied piece, or directly on an opposing piece
@@ -72,6 +80,9 @@ class Move():
     def __init__(self, space, special):
         self.space = space
         self.special = special
+    
+    def __eq__(self, compare):
+        return self.space == compare.space and self.special == compare.special
 
 """Used to indicate empty spaces, because None is used to indicate that a given set of coordinates are off the board"""
 class Empty():
@@ -80,12 +91,12 @@ class Empty():
 
 """The class which all chess pieces inherit from"""
 class Piece():
-    def __init__(self, ident, color, value, image):
+    def __init__(self, ident, color, moved, value, image):
         self.ident = ident
         self.color = color
         self.value = value
         self.image = image
-        self.moved = False
+        self.moved = moved
     
     """b - The Board object that represents the current state of the game and contains prior states.
        space - A tuple of x and y coordinates which represent the piece's current space"""
@@ -93,8 +104,8 @@ class Piece():
         return []
 
 class Pawn(Piece):
-    def __init__(self, ident, color):
-        Piece.__init__(self, ident, color, 1, "")
+    def __init__(self, ident, color, moved=False):
+        Piece.__init__(self, ident, color, moved, PAWN_VAL, "")
         
         if (self.color == WHITE):
             self.upMove = 1
@@ -135,17 +146,17 @@ class Pawn(Piece):
         """En-Passent"""
         left = isOccupiedBy(b.board, space, (-1, 0))
         right = isOccupiedBy(b.board, space, (1, 0))
-        if (isinstance(left, Pawn) and self.validPassent(moveSpace(space, (-1, 0)), left.ident, b.prevBoard)):
+        if (isinstance(left, Pawn) and self.validPassent(moveSpace(space, (-1, 0)), left.ident, b.getLastState())):
             v.append(Move(moveSpace(space, (-1, self.upMove)), EN_PASSENT))
             
-        if (isinstance(right, Pawn) and self.validPassent(moveSpace(space, (-1, 0)), right.ident, b.prevBoard)):
+        if (isinstance(right, Pawn) and self.validPassent(moveSpace(space, (-1, 0)), right.ident, b.getLastState())):
             v.append(Move(moveSpace(space, (1, self.upMove)), EN_PASSENT))
         
         return v
 
 class Knight(Piece):
-    def __init__(self, ident, color):
-        Piece.__init__(self, ident, color, 3, "")
+    def __init__(self, ident, color, moved=False):
+        Piece.__init__(self, ident, color, moved, KNIGHT_VAL, "")
     
     def validMoves(self, b, space):
         
@@ -170,8 +181,8 @@ class Knight(Piece):
         return v
 
 class Bishop(Piece):
-    def __init__(self, ident, color):
-        Piece.__init__(self, ident, color, 3.5, "")
+    def __init__(self, ident, color, moved=False):
+        Piece.__init__(self, ident, color, moved, BISHOP_VAL, "")
     
     def validMoves(self, b, space):
         
@@ -185,8 +196,8 @@ class Bishop(Piece):
         return v
 
 class Rook(Piece):
-    def __init__(self, ident, color):
-        Piece.__init__(self, ident, color, 7, "")
+    def __init__(self, ident, color, moved=False):
+        Piece.__init__(self, ident, color, moved, ROOK_VAL, "")
     
     def validMoves(self, b, space):
         
@@ -200,8 +211,8 @@ class Rook(Piece):
         return v
 
 class Queen(Piece):
-    def __init__(self, ident, color):
-        Piece.__init__(self, ident, color, 9, "")
+    def __init__(self, ident, color, moved=False):
+        Piece.__init__(self, ident, color, moved, QUEEN_VAL, "")
     
     def validMoves(self, b, space):
         
@@ -219,8 +230,8 @@ class Queen(Piece):
         return v
 
 class King(Piece):
-    def __init__(self, ident, color):
-        Piece.__init__(self, ident, color, 0, "")
+    def __init__(self, ident, color, moved=False):
+        Piece.__init__(self, ident, color, moved, KING_VAL, "")
         
         if (self.color == WHITE):
             self.upMove = 1
