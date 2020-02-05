@@ -20,13 +20,18 @@ white = (255,255,255)
 red = (200,0,0)
 green = (0,200,0)
 
+# Global Variables:
+# 0 for human, 1 for AI
+whitePlayer = None
+blackPlayer = None
+
 # Initilizing the display and setting the title of window
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Chess AI Capstone')
 clock = pygame.time.Clock()
 
 # Function for text objects
-def text_objects(text, font):
+def textObjects(text, font):
     textSurface = font.render(text, True, black) # Color might change with the new color module
     return textSurface, textSurface.get_rect()
 
@@ -47,8 +52,8 @@ def button(msg,x,y,w,h,ic,ac,action=None):
             action()         
     else:
         pygame.draw.rect(gameDisplay, ic,(x,y,w,h))
-    smallText = pygame.font.SysFont("comicsansms",20)
-    textSurf, textRect = text_objects(msg, smallText)
+    smallText = pygame.font.SysFont("agencyfb",22)
+    textSurf, textRect = textObjects(msg, smallText)
     textRect.center = ( (x+(w/2)), (y+(h/2)) )
     gameDisplay.blit(textSurf, textRect)
 
@@ -56,6 +61,43 @@ def button(msg,x,y,w,h,ic,ac,action=None):
 def quitgame():
     pygame.quit()
     quit()
+
+# Functions for White and Black player selection
+def whiteHuman():
+    global whitePlayer
+    whitePlayer = 0
+    # TODO: Make black circle object
+
+def whiteAI():
+    global whitePlayer
+    whitePlayer = 1
+    # TODO: Make black circle object
+
+def blackHuman():
+    global blackPlayer
+    blackPlayer = 0
+    # TODO: Make black circle object
+
+def blackAI():
+    global blackPlayer
+    blackPlayer = 1
+    # TODO: Make black circle object
+
+# start button function
+def startGame():
+    global whitePlayer
+    global blackPlayer
+
+    # Might need to change this to display constantly if clicked
+    # This means i need a variable to toggle it
+    if whitePlayer is None or blackPlayer is None:
+        text = pygame.font.SysFont("agencyfb",25)
+        TextSurf, TextRect = textObjects("Please select Human or AI for both sides", text)
+        TextRect.center = ((display_width/2),(display_height/2))
+        gameDisplay.blit(TextSurf, TextRect)
+    else:
+        #STUB might need to fix
+        gameMain()
 
 def gameIntro():
 
@@ -70,24 +112,52 @@ def gameIntro():
                 
         gameDisplay.fill(white)
         largeText = pygame.font.SysFont("agencyfb",115)
-        TextSurf, TextRect = text_objects("Chess AI", largeText)
+        TextSurf, TextRect = textObjects("Chess AI", largeText)
         TextRect.center = ((display_width/2),(display_height/6))
         gameDisplay.blit(TextSurf, TextRect)
 
-        # TODO: figure out what side is white and black
-        # Left side buttons
-        button("Human",65,350,100,50,green,red,quitgame) # still need function for toggle with other button
-        button("AI",65,425,100,50,green,red,quitgame)
+        # Left side buttons - white
+        button("Human",65,350,100,50,green,red,whiteHuman) # still need function for toggle with other button
+        button("AI",65,425,100,50,green,red,whiteAI)
+
+        # Left side circles
+        global whitePlayer
+        if whitePlayer is None:
+            pygame.draw.circle(gameDisplay, black, (35,375), 10, 1)
+            pygame.draw.circle(gameDisplay, black, (35,450), 10, 1)
+        elif whitePlayer == 0:
+            pygame.draw.circle(gameDisplay, black, (35,375), 10, 0)
+            pygame.draw.circle(gameDisplay, black, (35,450), 10, 1)
+        else:
+            pygame.draw.circle(gameDisplay, black, (35,375), 10, 1)
+            pygame.draw.circle(gameDisplay, black, (35,450), 10, 0)
 
         # Center Button
-        button("Start",350,500,100,50,green,red,quitgame)
+        button("Start",350,500,100,50,green,red,startGame)
 
-        # Right side buttons
-        button("Human",635,350,100,50,green,red,quitgame)
-        button("AI",635,425,100,50,green,red,quitgame)
+        # Right side buttons - Black
+        button("Human",635,350,100,50,green,red,blackHuman)
+        button("AI",635,425,100,50,green,red,blackAI)
         button("Exit",635,500,100,50,red,green,quitgame)
+
+        # Right side circles
+        global blackPlayer
+        if blackPlayer is None:
+            pygame.draw.circle(gameDisplay, black, (765,375), 10, 1)
+            pygame.draw.circle(gameDisplay, black, (765,450), 10, 1)
+        elif blackPlayer == 0:
+            pygame.draw.circle(gameDisplay, black, (765,375), 10, 0)
+            pygame.draw.circle(gameDisplay, black, (765,450), 10, 1)
+        else:
+            pygame.draw.circle(gameDisplay, black, (765,375), 10, 1)
+            pygame.draw.circle(gameDisplay, black, (765,450), 10, 0)
 
         pygame.display.update()
         clock.tick(15)
+
+
+def gameMain():
+    pass
+    #TODO make main gameboard
 
 gameIntro()
