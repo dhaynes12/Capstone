@@ -36,7 +36,7 @@ class Board():
                 self.board[i][6] = P.Pawn(36 + i, P.BLACK)
     
     def getLastState(self):
-        return self.prevBoards(len(self.prevBoards) - 1)
+        return self.prevBoards[len(self.prevBoards) - 1]
     
     def wipe(self):
         for space in self.board:
