@@ -6,6 +6,7 @@
 import pygame
 import time
 import random # probably dont need
+from InputBox import *
  
 pygame.init() # Wont need later because main should have
 
@@ -41,7 +42,7 @@ def button(msg,x,y,w,h,ic,ac,action=None):
     Uses x and y for start position (top left of button)
     Uses w and h for width and height
     Uses ic for initial color and ac for action color (RGB color tuple)
-    Uses action for mouse clicl action"""
+    Uses action for mouse click action"""
 
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -66,22 +67,18 @@ def quitgame():
 def whiteHuman():
     global whitePlayer
     whitePlayer = 0
-    # TODO: Make black circle object
 
 def whiteAI():
     global whitePlayer
     whitePlayer = 1
-    # TODO: Make black circle object
 
 def blackHuman():
     global blackPlayer
     blackPlayer = 0
-    # TODO: Make black circle object
 
 def blackAI():
     global blackPlayer
     blackPlayer = 1
-    # TODO: Make black circle object
 
 # start button function
 def startGame():
@@ -97,11 +94,17 @@ def startGame():
         gameDisplay.blit(TextSurf, TextRect)
     else:
         #STUB might need to fix
+        #Add Values for the AI into some sort of check
         gameMain()
 
 def gameIntro():
 
     intro = True
+    
+    # Input textbox initializations
+    inputBox1 = InputBox(200, 425, 50, 50, black, red)
+    inputBox2 = InputBox(550, 425, 50, 50, black, red)
+    inputBoxes = [inputBox1, inputBox2]
 
     while intro:
         for event in pygame.event.get():
@@ -109,7 +112,10 @@ def gameIntro():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-                
+            for box in inputBoxes:
+                box.handle_event(event)
+        for box in inputBoxes:
+            box.update()        
         gameDisplay.fill(white)
         largeText = pygame.font.SysFont("agencyfb",115)
         TextSurf, TextRect = textObjects("Chess AI", largeText)
@@ -121,6 +127,7 @@ def gameIntro():
         button("AI",65,425,100,50,green,red,whiteAI)
 
         # Left side circles
+        # Flow control for which button is selected (1 for hollow, 0 for filled)
         global whitePlayer
         if whitePlayer is None:
             pygame.draw.circle(gameDisplay, black, (35,375), 10, 1)
@@ -141,6 +148,7 @@ def gameIntro():
         button("Exit",635,500,100,50,red,green,quitgame)
 
         # Right side circles
+        # Flow control for which button is selected (1 for hollow, 0 for filled)
         global blackPlayer
         if blackPlayer is None:
             pygame.draw.circle(gameDisplay, black, (765,375), 10, 1)
@@ -151,6 +159,8 @@ def gameIntro():
         else:
             pygame.draw.circle(gameDisplay, black, (765,375), 10, 1)
             pygame.draw.circle(gameDisplay, black, (765,450), 10, 0)
+        for box in inputBoxes:
+            box.draw(gameDisplay)
 
         pygame.display.update()
         clock.tick(15)
@@ -160,4 +170,5 @@ def gameMain():
     pass
     #TODO make main gameboard
 
+# Make sure to remove this after
 gameIntro()
