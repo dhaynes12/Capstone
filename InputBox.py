@@ -37,7 +37,7 @@ class InputBox:
                 #    self.text = ''
                 if event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
-                elif (event.key in self.keypad) or (event.key in self.numbers):
+                elif ((event.key in self.keypad) or (event.key in self.numbers)) and event.mod == pygame.KMOD_NONE:
                     self.text += event.unicode
                 # Re-render the text.
                 self.txt_surface = self.font.render(self.text, True, self.color)
