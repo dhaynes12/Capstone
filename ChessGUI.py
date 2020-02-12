@@ -37,7 +37,7 @@ def textObjects(text, font):
     return textSurface, textSurface.get_rect()
 
 # Function for button objects
-def button(msg,x,y,w,h,ic,ac,action=None):
+def button(msg,x,y,w,h,ic,ac,action = None, args = None):
     """Creates Button object
     Uses x and y for start position (top left of button)
     Uses w and h for width and height
@@ -50,7 +50,10 @@ def button(msg,x,y,w,h,ic,ac,action=None):
     if x+w > mouse[0] > x and y+h > mouse[1] > y:
         pygame.draw.rect(gameDisplay, ac,(x,y,w,h))
         if click[0] == 1 and action != None:
-            action()         
+            if args == None:
+                action()
+            else:
+                action(args)
     else:
         pygame.draw.rect(gameDisplay, ic,(x,y,w,h))
     smallText = pygame.font.SysFont("agencyfb",22)
@@ -81,7 +84,7 @@ def blackAI():
     blackPlayer = 1
 
 # start button function
-def startGame():
+def startGame(args):
     global whitePlayer
     global blackPlayer
 
@@ -90,6 +93,16 @@ def startGame():
     if whitePlayer is None or blackPlayer is None:
         text = pygame.font.SysFont("agencyfb",25)
         TextSurf, TextRect = textObjects("Please select Human or AI for both sides", text)
+        TextRect.center = ((display_width/2),(display_height/2))
+        gameDisplay.blit(TextSurf, TextRect)
+    elif whitePlayer == 1 and args[0].text == '':
+        text = pygame.font.SysFont("agencyfb",25)
+        TextSurf, TextRect = textObjects("Please enter a look ahead value for white side AI", text)
+        TextRect.center = ((display_width/2),(display_height/2))
+        gameDisplay.blit(TextSurf, TextRect)
+    elif blackPlayer == 1 and args[1].text == '':
+        text = pygame.font.SysFont("agencyfb",25)
+        TextSurf, TextRect = textObjects("Please enter a look ahead value for black side AI", text)
         TextRect.center = ((display_width/2),(display_height/2))
         gameDisplay.blit(TextSurf, TextRect)
     else:
@@ -140,7 +153,7 @@ def gameIntro():
             pygame.draw.circle(gameDisplay, black, (35,450), 10, 0)
 
         # Center Button
-        button("Start",350,500,100,50,green,red,startGame)
+        button("Start",350,500,100,50,green,red,startGame, inputBoxes)
 
         # Right side buttons - Black
         button("Human",635,350,100,50,green,red,blackHuman)
