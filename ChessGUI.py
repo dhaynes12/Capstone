@@ -61,6 +61,30 @@ def button(msg,x,y,w,h,ic,ac,action = None, args = None):
     textRect.center = ( (x+(w/2)), (y+(h/2)) )
     gameDisplay.blit(textSurf, textRect)
 
+def square(msg,x,y,w,h,ic,ac,action = None, args = None):
+    """Creates square object for game board
+    Uses x and y for start position (top left of button)
+    Uses w and h for width and height
+    Uses ic for initial color and ac for action color (RGB color tuple)
+    Uses action for mouse click action"""
+
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    #print(click)
+    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+        pygame.draw.rect(gameDisplay, ac,(x,y,w,h))
+        if click[0] == 1 and action != None:
+            if args == None:
+                action()
+            else:
+                action(args)
+    else:
+        pygame.draw.rect(gameDisplay, ic,(x,y,w,h))
+    smallText = pygame.font.SysFont("agencyfb",22)
+    textSurf, textRect = textObjects(msg, smallText)
+    textRect.center = ( (x+(w/2)), (y+(h/2)) )
+    gameDisplay.blit(textSurf, textRect)
+
 # Helper function for quit/exit button
 def quitgame():
     pygame.quit()
@@ -177,9 +201,12 @@ def gameIntro():
         pygame.display.update()
         clock.tick(15)
 
+def chessPiece(x, y, img):
+    gameDisplay.blit(img,(x,y))
 
 def gameMain():
     gameExit = False
+    blackBishop = pygame.image.load("pieces\black_bishop.png")
  
     while not gameExit:
  
@@ -189,9 +216,15 @@ def gameMain():
                 quit()
 
         gameDisplay.fill(white)
+
+        square("",35,425,40,40,black,red,blackAI)
+        square("",75,425,40,40,green,red,blackAI)
+        chessPiece(200,200,blackBishop)
+
         pygame.display.update()
         clock.tick(15)
     #TODO make main gameboard
 
 # Make sure to remove this after
-gameIntro()
+#gameIntro()
+gameMain()
