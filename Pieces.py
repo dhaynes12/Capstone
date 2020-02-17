@@ -90,10 +90,24 @@ def spacesAreFree(b, spaces):
     
     return True
 
+def colorToStr(color):
+    if color == P.WHITE:
+        return "white"
+    else if color == P.BLACK:
+        return "black"
+    
+    return "invalid"
+
 class Move():
     def __init__(self, space, special=None):
         self.space = space
         self.special = special
+    
+    def x(self):
+        return self.space[0]
+    
+    def y(self):
+        return self.space[1]
     
     def __eq__(self, compare):
         return self.space == compare.space and self.special == compare.special
@@ -125,7 +139,7 @@ class Piece():
 
 class Pawn(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, PAWN_VAL, "")
+        Piece.__init__(self, ident, color, moved, PAWN_VAL, colorToStr(color) + "_pawn.png")
         
         if (self.color == WHITE):
             self.upMove = 1
@@ -176,7 +190,7 @@ class Pawn(Piece):
 
 class Knight(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, KNIGHT_VAL, "")
+        Piece.__init__(self, ident, color, moved, KNIGHT_VAL, colorToStr(color) + "_knight.png")
     
     def validMoves(self, b, space):
         
@@ -202,7 +216,7 @@ class Knight(Piece):
 
 class Bishop(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, BISHOP_VAL, "")
+        Piece.__init__(self, ident, color, moved, BISHOP_VAL, colorToStr(color) + "_bishop.png")
     
     def validMoves(self, b, space):
         
@@ -217,7 +231,7 @@ class Bishop(Piece):
 
 class Rook(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, ROOK_VAL, "")
+        Piece.__init__(self, ident, color, moved, ROOK_VAL, colorToStr(color) + "_rook.png")
     
     def validMoves(self, b, space):
         
@@ -232,7 +246,7 @@ class Rook(Piece):
 
 class Queen(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, QUEEN_VAL, "")
+        Piece.__init__(self, ident, color, moved, QUEEN_VAL, colorToStr(color) + "_queen.png")
     
     def validMoves(self, b, space):
         
@@ -251,7 +265,7 @@ class Queen(Piece):
 
 class King(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, KING_VAL, "")
+        Piece.__init__(self, ident, color, moved, KING_VAL, colorToStr(color) + "_king.png")
         
         if (self.color == WHITE):
             self.upMove = 1
