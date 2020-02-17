@@ -6,6 +6,7 @@ class Board():
         self.prevBoards = []         # The game's previous states, from oldest to newest
         self.whiteChecked = False   # True when white's king is in check
         self.blackChecked = False   # True when black's king is in check
+        self.turn = P.WHITE
         
         for x in range(0, 8):
             self.board.append([])

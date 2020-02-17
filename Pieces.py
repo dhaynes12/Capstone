@@ -105,6 +105,9 @@ class Move():
 class Empty():
     def __init__(self):
         pass
+    
+    def validMoves(b, space):
+        return None
 
 """The class which all chess pieces inherit from"""
 class Piece():
