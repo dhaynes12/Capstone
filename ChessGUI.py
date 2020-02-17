@@ -121,7 +121,6 @@ def gameIntro():
 
     while intro:
         for event in pygame.event.get():
-            #print(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
@@ -180,7 +179,18 @@ def gameIntro():
 
 
 def gameMain():
-    pass
+    gameExit = False
+ 
+    while not gameExit:
+ 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        gameDisplay.fill(white)
+        pygame.display.update()
+        clock.tick(15)
     #TODO make main gameboard
 
 # Make sure to remove this after
