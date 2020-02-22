@@ -17,6 +17,12 @@ ROOK_VAL = 7
 QUEEN_VAL = 9
 KING_VAL = 0
 
+def swapTurn(color):
+    if (color == WHITE):
+        return BLACK
+    
+    return WHITE
+
 """Returns a space that's a number of horizontal and vertical moves away from the given space.
 
    space - A tuple of x and y coordinates which represents one of the spaces
@@ -98,6 +104,13 @@ def colorToStr(color):
     
     return "invalid"
 
+def searchForPiece(pieceId, board):
+    for space in board:
+        if (isinstance(space, Piece) and space.ident == pieceId):
+            return space, (x, y)
+    
+    return None, None
+
 class Move():
     def __init__(self, space, special=None):
         self.space = space
@@ -110,7 +123,12 @@ class Move():
         return self.space[1]
     
     def __eq__(self, compare):
-        return self.space == compare.space and self.special == compare.special
+        if (isinstance(compare, Move)):
+            return self.space == compare.space and self.special == compare.special
+        elif (isinstance(compare, tuple)):
+            return self.space == compare
+        
+        raise TypeError
         
     def __str__(self):
         return "Move: " + str(self.space) + " -- Special: " + str(self.special)
@@ -139,7 +157,7 @@ class Piece():
 
 class Pawn(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, PAWN_VAL, colorToStr(color) + "_pawn.png")
+        Piece.__init__(self, ident, color, moved, PAWN_VAL, "pieces/" + colorToStr(color) + "_pawn.png")
         
         if (self.color == WHITE):
             self.upMove = 1
@@ -190,7 +208,7 @@ class Pawn(Piece):
 
 class Knight(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, KNIGHT_VAL, colorToStr(color) + "_knight.png")
+        Piece.__init__(self, ident, color, moved, KNIGHT_VAL, "pieces/" + colorToStr(color) + "_knight.png")
     
     def validMoves(self, b, space):
         
@@ -216,7 +234,7 @@ class Knight(Piece):
 
 class Bishop(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, BISHOP_VAL, colorToStr(color) + "_bishop.png")
+        Piece.__init__(self, ident, color, moved, BISHOP_VAL, "pieces/" + colorToStr(color) + "_bishop.png")
     
     def validMoves(self, b, space):
         
@@ -231,7 +249,7 @@ class Bishop(Piece):
 
 class Rook(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, ROOK_VAL, colorToStr(color) + "_rook.png")
+        Piece.__init__(self, ident, color, moved, ROOK_VAL, "pieces/" + colorToStr(color) + "_rook.png")
     
     def validMoves(self, b, space):
         
@@ -246,7 +264,7 @@ class Rook(Piece):
 
 class Queen(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, QUEEN_VAL, colorToStr(color) + "_queen.png")
+        Piece.__init__(self, ident, color, moved, QUEEN_VAL, "pieces/" + colorToStr(color) + "_queen.png")
     
     def validMoves(self, b, space):
         
@@ -265,7 +283,7 @@ class Queen(Piece):
 
 class King(Piece):
     def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, KING_VAL, colorToStr(color) + "_king.png")
+        Piece.__init__(self, ident, color, moved, KING_VAL, "pieces/" + colorToStr(color) + "_king.png")
         
         if (self.color == WHITE):
             self.upMove = 1
