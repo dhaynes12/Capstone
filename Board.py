@@ -25,14 +25,14 @@ class Board():
             self.board[6][0] = P.Knight(6, P.WHITE)
             self.board[5][0] = P.Bishop(7, P.WHITE)
             
-            self.board[0][0] = P.Rook(8, P.BLACK)
-            self.board[1][0] = P.Knight(9, P.BLACK)
-            self.board[2][0] = P.Bishop(10, P.BLACK)
-            self.board[3][0] = P.Queen(11, P.BLACK)
-            self.board[4][0] = P.King(12, P.BLACK)
-            self.board[7][0] = P.Rook(13, P.BLACK)
-            self.board[6][0] = P.Knight(14, P.BLACK)
-            self.board[5][0] = P.Bishop(15, P.BLACK)
+            self.board[0][7] = P.Rook(8, P.BLACK)
+            self.board[1][7] = P.Knight(9, P.BLACK)
+            self.board[2][7] = P.Bishop(10, P.BLACK)
+            self.board[3][7] = P.Queen(11, P.BLACK)
+            self.board[4][7] = P.King(12, P.BLACK)
+            self.board[7][7] = P.Rook(13, P.BLACK)
+            self.board[6][7] = P.Knight(14, P.BLACK)
+            self.board[5][7] = P.Bishop(15, P.BLACK)
             
             for i in range(0, 8):
                 self.board[i][1] = P.Pawn(16 + i, P.WHITE)

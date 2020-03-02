@@ -74,14 +74,15 @@ def lookLine(board, space, color, xIncrease, yIncrease):
 """Gets all valid moves from all pieces of the specified color
 
    color - The color of the pieces that will have their moves returned
-   b - The Board object that represents the current state of the game."""
-def getValidMoves(color, b):
+   b - The Board object that represents the current state of the game.
+   kingCheck - A boolean that indicates if this function is called as part of a castle check"""
+def getValidMoves(color, b, kingCheck = None):
     moves = []
 
     for x in range(0, 8):
         for y in range(0, 8):
             if (isinstance(b.board[x][y], Piece) and b.board[x][y].color == color):
-                moves.extend(b.board[x][y].validMoves(b, (x, y)))
+                moves.extend(b.board[x][y].validMoves(b, (x, y), kingCheck))
     
     return moves
 
@@ -141,8 +142,8 @@ class Empty():
     def __init__(self):
         pass
     
-    def validMoves(b, space):
-        return None
+    def validMoves(self, b, space):
+        return []
 
 """The class which all chess pieces inherit from"""
 class Piece():
@@ -154,8 +155,9 @@ class Piece():
         self.moved = moved
     
     """b - The Board object that represents the current state of the game and contains prior states.
-       space - A tuple of x and y coordinates which represent the piece's current space"""
-    def validMoves(b, space):
+       space - A tuple of x and y coordinates which represent the piece's current space
+       kingCheck - A boolean that indicates if this function is called as part of a castle check"""
+    def validMoves(self, b, space, kingCheck=None):
         return []
 
 class Pawn(Piece):
@@ -175,7 +177,7 @@ class Pawn(Piece):
         
         return False
     
-    def validMoves(self, b, space):
+    def validMoves(self, b, space, kingCheck=None):
         
         v = []
         
@@ -213,7 +215,7 @@ class Knight(Piece):
     def __init__(self, ident, color, moved=False):
         Piece.__init__(self, ident, color, moved, KNIGHT_VAL, "pieces/" + colorToStr(color) + "_knight.png")
     
-    def validMoves(self, b, space):
+    def validMoves(self, b, space, kingCheck=None):
         
         v = []
         posMoves = [
@@ -239,7 +241,7 @@ class Bishop(Piece):
     def __init__(self, ident, color, moved=False):
         Piece.__init__(self, ident, color, moved, BISHOP_VAL, "pieces/" + colorToStr(color) + "_bishop.png")
     
-    def validMoves(self, b, space):
+    def validMoves(self, b, space, kingCheck=None):
         
         v = []
         
@@ -254,7 +256,7 @@ class Rook(Piece):
     def __init__(self, ident, color, moved=False):
         Piece.__init__(self, ident, color, moved, ROOK_VAL, "pieces/" + colorToStr(color) + "_rook.png")
     
-    def validMoves(self, b, space):
+    def validMoves(self, b, space, kingCheck=None):
         
         v = []
         
@@ -269,7 +271,7 @@ class Queen(Piece):
     def __init__(self, ident, color, moved=False):
         Piece.__init__(self, ident, color, moved, QUEEN_VAL, "pieces/" + colorToStr(color) + "_queen.png")
     
-    def validMoves(self, b, space):
+    def validMoves(self, b, space, kingCheck=None):
         
         v = []
         
@@ -300,7 +302,7 @@ class King(Piece):
         
         
     
-    def validMoves(self, b, space):
+    def validMoves(self, b, space, kingCheck=None):
         v = []
         
         """Standard Movement. Doesn't take check into account -- game itself will revert
@@ -314,34 +316,36 @@ class King(Piece):
                     v.append(Move(moveSpace(space, (x, y))))
         
         """Castling"""
-        leftRookSpace = b.board[0][space[1]]
-        rightRookSpace = b.board[7][space[1]]
-        
-        leftRookUnmoved = isinstance(leftRookSpace, Rook) and not leftRookSpace.moved
-        rightRookUnmoved = isinstance(rightRookSpace, Rook) and not rightRookSpace.moved
-        
-        checked = (b.whiteChecked and self.color == WHITE) or (b.blackChecked and self.color == BLACK)
-        
-        if (not checked and not self.moved and (leftRookUnmoved or rightRookUnmoved)):
-            opposer = WHITE
-            if (self.color == WHITE):
-                opposer = BLACK
+        """Don't check for castling if this validMoves is called as part of another king's castle check"""
+        if (not kingCheck):
+            leftRookSpace = b.board[0][space[1]]
+            rightRookSpace = b.board[7][space[1]]
             
-            dangerSpaces = []
-            for move in getValidMoves(opposer, b):
-                if(move.special == None):
-                    dangerSpaces.append(move.space)
+            leftRookUnmoved = isinstance(leftRookSpace, Rook) and not leftRookSpace.moved
+            rightRookUnmoved = isinstance(rightRookSpace, Rook) and not rightRookSpace.moved
             
-            if (leftRookUnmoved):
-                leftSpaces = [moveSpace(space, (-1, 0)), moveSpace(space, (-2, 0)), moveSpace(space, (-3, 0))]
+            checked = (b.whiteChecked and self.color == WHITE) or (b.blackChecked and self.color == BLACK)
+            
+            if (not checked and not self.moved and (leftRookUnmoved or rightRookUnmoved)):
+                opposer = WHITE
+                if (self.color == WHITE):
+                    opposer = BLACK
                 
-                if (not hasSharedSpaces(dangerSpaces, leftSpaces) and spacesAreFree(b, leftSpaces)):
-                    v.append(Move(moveSpace(space, (-2, 0)), CASTLE))
-            
-            if (rightRookUnmoved):
-                rightSpaces = [moveSpace(space, (1, 0)), moveSpace(space, (2, 0))]
+                dangerSpaces = []
+                for move in getValidMoves(opposer, b, True):
+                    if(move.special == None):
+                        dangerSpaces.append(move.space)
                 
-                if (not hasSharedSpaces(dangerSpaces, rightSpaces) and spacesAreFree(b, rightSpaces)):
-                    v.append(Move(moveSpace(space, (2, 0)), CASTLE))
+                if (leftRookUnmoved):
+                    leftSpaces = [moveSpace(space, (-1, 0)), moveSpace(space, (-2, 0)), moveSpace(space, (-3, 0))]
+                    
+                    if (not hasSharedSpaces(dangerSpaces, leftSpaces) and spacesAreFree(b, leftSpaces)):
+                        v.append(Move(moveSpace(space, (-2, 0)), CASTLE))
+                
+                if (rightRookUnmoved):
+                    rightSpaces = [moveSpace(space, (1, 0)), moveSpace(space, (2, 0))]
+                    
+                    if (not hasSharedSpaces(dangerSpaces, rightSpaces) and spacesAreFree(b, rightSpaces)):
+                        v.append(Move(moveSpace(space, (2, 0)), CASTLE))
         
         return v
