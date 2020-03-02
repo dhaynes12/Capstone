@@ -7,6 +7,7 @@ import pygame
 import time
 import random # probably dont need
 from InputBox import *
+import os
  
 pygame.init() # Wont need later because main should have
 
@@ -16,6 +17,11 @@ display_height = 600
 
 # Some basic colors
 black = (0,0,0)
+darkGrey = (55,55,55)
+lightGrey = (235,235,235)
+skyBlue = (176,248,255)
+darkBlue = (0,100,160)
+sienna = (160,82,45)
 white = (255,255,255)
 
 red = (200,0,0)
@@ -206,7 +212,7 @@ def chessPiece(x, y, img):
 
 def gameMain():
     gameExit = False
-    blackBishop = pygame.image.load("pieces\black_bishop.png")
+    blackBishop = pygame.image.load("pieces\\black_bishop.png")
  
     while not gameExit:
  
@@ -217,9 +223,21 @@ def gameMain():
 
         gameDisplay.fill(white)
 
-        square("",35,425,40,40,black,red,blackAI)
-        square("",75,425,40,40,green,red,blackAI)
-        chessPiece(200,200,blackBishop)
+        # Add double for loop to make array of buttons
+        for x in range(0, 8):
+            for y in range(0, 8):
+                if x % 2 == 0:
+                    if y % 2 == 0:
+                        square("",(x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
+                    else:
+                        square("",(x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
+                else:
+                    if y % 2 == 0:
+                        square("",(x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
+                    else:
+                        square("",(x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
+        
+        chessPiece(220,435,blackBishop)
 
         pygame.display.update()
         clock.tick(15)

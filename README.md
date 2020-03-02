@@ -18,3 +18,6 @@ All chess symbols by Cburnett is licensed under [CC BY-SA3.0](https://creativeco
 * [Chess bdt45.svg](https://en.wikipedia.org/wiki/File:Chess_bdt45.svg)
 * [Chess ndt45.svg](https://en.wikipedia.org/wiki/File:Chess_ndt45.svg)
 * [Chess pdt45.svg](https://en.wikipedia.org/wiki/File:Chess_pdt45.svg)
+
+# Citations
+https://www.quora.com/What-are-some-heuristics-for-quickly-evaluating-chess-positions
