@@ -119,6 +119,7 @@ def blackAI():
     blackPlayer = 1
 
 def selectSpace(coords):
+    global selectMoves
     selectMoves = Logic.select_piece(state, coords[0], coords[1])
 
 # start button function
@@ -234,7 +235,6 @@ def gameMain():
                 quit()
 
         gameDisplay.fill(white)
-
         # Add double for loop to make array of buttons
         for x in range(0, 8):
             for y in range(0, 8):
