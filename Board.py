@@ -7,6 +7,8 @@ class Board():
         self.whiteChecked = False   # True when white's king is in check
         self.blackChecked = False   # True when black's king is in check
         self.turn = P.WHITE
+        self.whiteKingId = 4
+        self.blackKingId = 12
         
         for x in range(0, 8):
             self.board.append([])
@@ -36,8 +38,21 @@ class Board():
                 self.board[i][1] = P.Pawn(16 + i, P.WHITE)
                 self.board[i][6] = P.Pawn(36 + i, P.BLACK)
     
+    def getLastState(self, num):
+        return self.prevBoards[len(self.prevBoards) - num]
+    
     def getLastState(self):
-        return self.prevBoards[len(self.prevBoards) - 1]
+        return getLastState(self, 1)
+    
+    def getAndRemoveLastState(self, num):
+        rem = self.prevBoards[len(self.prevBoards) - num]
+        for i in reversed(range(len(self.prevBoards) - 1, len(self.prevBoards) - num + 1)):
+            self.prevBoards.pop(i)
+        
+        return rem
+    
+    def getAndRemoveLastState(self):
+        return getAndRemoveLastState(self, 1)
     
     def wipe(self):
         for space in self.board:
