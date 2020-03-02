@@ -19,7 +19,7 @@ display_height = 600
 black = (0,0,0)
 darkGrey = (55,55,55)
 lightGrey = (235,235,235)
-skyBlue = (176,248,255)
+skyBlue = (100,248,255)
 darkBlue = (0,100,160)
 sienna = (160,82,45)
 white = (255,255,255)
@@ -67,7 +67,7 @@ def button(msg,x,y,w,h,ic,ac,action = None, args = None):
     textRect.center = ( (x+(w/2)), (y+(h/2)) )
     gameDisplay.blit(textSurf, textRect)
 
-def square(msg,x,y,w,h,ic,ac,action = None, args = None):
+def square(x,y,w,h,ic,ac,action = None, args = None):
     """Creates square object for game board
     Uses x and y for start position (top left of button)
     Uses w and h for width and height
@@ -86,10 +86,6 @@ def square(msg,x,y,w,h,ic,ac,action = None, args = None):
                 action(args)
     else:
         pygame.draw.rect(gameDisplay, ic,(x,y,w,h))
-    smallText = pygame.font.SysFont("agencyfb",22)
-    textSurf, textRect = textObjects(msg, smallText)
-    textRect.center = ( (x+(w/2)), (y+(h/2)) )
-    gameDisplay.blit(textSurf, textRect)
 
 # Helper function for quit/exit button
 def quitgame():
@@ -228,14 +224,14 @@ def gameMain():
             for y in range(0, 8):
                 if x % 2 == 0:
                     if y % 2 == 0:
-                        square("",(x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
+                        square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
                     else:
-                        square("",(x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
+                        square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
                 else:
                     if y % 2 == 0:
-                        square("",(x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
+                        square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
                     else:
-                        square("",(x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
+                        square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
         
         chessPiece(220,435,blackBishop)
 
