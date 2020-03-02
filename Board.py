@@ -37,12 +37,16 @@ class Board():
             for i in range(0, 8):
                 self.board[i][1] = P.Pawn(16 + i, P.WHITE)
                 self.board[i][6] = P.Pawn(36 + i, P.BLACK)
-    
-    def getLastState(self, num):
-        return self.prevBoards[len(self.prevBoards) - num]
-    
-    def getLastState(self):
-        return getLastState(self, 1)
+
+    def getLastState(self, num = None):
+        if len(self.prevBoards) <= 0:
+            return None
+            
+        change = num
+        if num == None:
+            change = 1
+            
+        return self.prevBoards[len(self.prevBoards) - change]
     
     def getAndRemoveLastState(self, num):
         rem = self.prevBoards[len(self.prevBoards) - num]

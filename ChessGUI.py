@@ -9,8 +9,14 @@ import random # probably dont need
 from InputBox import *
 import os
 import Logic
+import Pieces
+from Board import Board
  
 pygame.init() # Wont need later because main should have
+
+# Variables for Gameplay
+selectMoves = []
+state = Board()
 
 # Display dimention -- Will need to change to match screen
 display_width = 800
@@ -24,6 +30,8 @@ skyBlue = (100,248,255)
 darkBlue = (0,100,160)
 sienna = (160,82,45)
 white = (255,255,255)
+darkGreen = (0,100,0)
+darkKhaki = (189,183,107)
 
 red = (200,0,0)
 green = (0,200,0)
@@ -109,6 +117,9 @@ def blackHuman():
 def blackAI():
     global blackPlayer
     blackPlayer = 1
+
+def selectSpace(coords):
+    selectMoves = Logic.select_piece(state, coords[0], coords[1])
 
 # start button function
 def startGame(args):
@@ -227,16 +238,30 @@ def gameMain():
         # Add double for loop to make array of buttons
         for x in range(0, 8):
             for y in range(0, 8):
-                if x % 2 == 0:
-                    if y % 2 == 0:
-                        square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,getCords,[x,y])
+                if (x,y) in selectMoves:
+                    """Highlighted Buttons"""
+                    if x % 2 == 0:
+                        if y % 2 == 0:
+                            square((x * 45 + 220),(435 - y * 45),45,45,darkGreen,darkBlue,selectSpace,(x,y))
+                        else:
+                            square((x * 45 + 220),(435 - y * 45),45,45,darkKhaki,skyBlue,selectSpace,(x,y))
                     else:
-                        square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,getCords,[x,y])
+                        if y % 2 == 0:
+                            square((x * 45 + 220),(435 - y * 45),45,45,darkKhaki,skyBlue,selectSpace,(x,y))
+                        else:
+                            square((x * 45 + 220),(435 - y * 45),45,45,darkGreen,darkBlue,selectSpace,(x,y))
                 else:
-                    if y % 2 == 0:
-                        square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,getCords,[x,y])
+                    """Non-Highlighted Buttons"""
+                    if x % 2 == 0:
+                        if y % 2 == 0:
+                            square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,selectSpace,(x,y))
+                        else:
+                            square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,selectSpace,(x,y))
                     else:
-                        square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,getCords,[x,y])
+                        if y % 2 == 0:
+                            square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,selectSpace,(x,y))
+                        else:
+                            square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,selectSpace,(x,y))
         
         chessPiece(220,435,blackBishop)
 

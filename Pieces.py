@@ -37,6 +37,9 @@ def moveSpace(space, move):
    space - A tuple of x and y coordinates which represents one of the spaces
    move - A tuple of number of horizontal movements and number of vertical movements from the given space"""
 def isOccupiedBy(board, space, move):
+    if board == None:
+        return None
+        
     look = moveSpace(space, move)
     
     if (look[0] > 7 or look[1] > 7 or look[0] < 0 or look[1] < 0):
@@ -97,9 +100,9 @@ def spacesAreFree(b, spaces):
     return True
 
 def colorToStr(color):
-    if color == P.WHITE:
+    if color == WHITE:
         return "white"
-    elif color == P.BLACK:
+    elif color == BLACK:
         return "black"
     
     return "invalid"
