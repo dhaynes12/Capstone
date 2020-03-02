@@ -8,6 +8,7 @@ import time
 import random # probably dont need
 from InputBox import *
 import os
+import Logic
  
 pygame.init() # Wont need later because main should have
 
@@ -241,4 +242,4 @@ def gameMain():
 
 # Make sure to remove this after
 #gameIntro()
-gameMain()
+#gameMain()

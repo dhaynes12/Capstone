@@ -99,7 +99,7 @@ def spacesAreFree(b, spaces):
 def colorToStr(color):
     if color == P.WHITE:
         return "white"
-    else if color == P.BLACK:
+    elif color == P.BLACK:
         return "black"
     
     return "invalid"

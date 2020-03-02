@@ -1,4 +1,4 @@
-from Board.py import Board
+from Board import Board
 import Pieces as P
 
 def select_piece(state, x, y):
@@ -27,8 +27,7 @@ def move_piece(state, selX, selY, move):
         elif (move.x() == 6):
             st.board[5][0] = deepcopy(st.board[7][0])
             st.board[7][0] = P.Empty()
-    elif isinstance(st.board[move.x()][move.y()], P.Pawn) and 
-    (piece.color == P.WHITE and move.y() == 7) or (piece.color == P.BLACK and move.y() == 0)):
+    elif (isinstance(st.board[move.x()][move.y()], P.Pawn) and (piece.color == P.WHITE and move.y() == 7) or (piece.color == P.BLACK and move.y() == 0)):
         promotion = Queen()
         st.board[move.x()][move.y()] = promotion
         """Need to figure out how to let the user select the promotion"""
