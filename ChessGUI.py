@@ -207,6 +207,10 @@ def gameIntro():
 def chessPiece(x, y, img):
     gameDisplay.blit(img,(x,y))
 
+def getCords(args):
+    for x in args:
+        print(args)
+
 def gameMain():
     gameExit = False
     blackBishop = pygame.image.load("pieces\\black_bishop.png")
@@ -225,14 +229,14 @@ def gameMain():
             for y in range(0, 8):
                 if x % 2 == 0:
                     if y % 2 == 0:
-                        square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
+                        square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,getCords,[x,y])
                     else:
-                        square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
+                        square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,getCords,[x,y])
                 else:
                     if y % 2 == 0:
-                        square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
+                        square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,getCords,[x,y])
                     else:
-                        square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
+                        square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,getCords,[x,y])
         
         chessPiece(220,435,blackBishop)
 
