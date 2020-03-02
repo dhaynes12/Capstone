@@ -7,6 +7,7 @@ import pygame
 import time
 import random # probably dont need
 from InputBox import *
+import os
  
 pygame.init() # Wont need later because main should have
 
@@ -16,6 +17,11 @@ display_height = 600
 
 # Some basic colors
 black = (0,0,0)
+darkGrey = (55,55,55)
+lightGrey = (235,235,235)
+skyBlue = (176,248,255)
+darkBlue = (0,100,160)
+sienna = (160,82,45)
 white = (255,255,255)
 
 red = (200,0,0)
@@ -39,6 +45,30 @@ def textObjects(text, font):
 # Function for button objects
 def button(msg,x,y,w,h,ic,ac,action = None, args = None):
     """Creates Button object
+    Uses x and y for start position (top left of button)
+    Uses w and h for width and height
+    Uses ic for initial color and ac for action color (RGB color tuple)
+    Uses action for mouse click action"""
+
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    #print(click)
+    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+        pygame.draw.rect(gameDisplay, ac,(x,y,w,h))
+        if click[0] == 1 and action != None:
+            if args == None:
+                action()
+            else:
+                action(args)
+    else:
+        pygame.draw.rect(gameDisplay, ic,(x,y,w,h))
+    smallText = pygame.font.SysFont("agencyfb",22)
+    textSurf, textRect = textObjects(msg, smallText)
+    textRect.center = ( (x+(w/2)), (y+(h/2)) )
+    gameDisplay.blit(textSurf, textRect)
+
+def square(msg,x,y,w,h,ic,ac,action = None, args = None):
+    """Creates square object for game board
     Uses x and y for start position (top left of button)
     Uses w and h for width and height
     Uses ic for initial color and ac for action color (RGB color tuple)
@@ -177,9 +207,12 @@ def gameIntro():
         pygame.display.update()
         clock.tick(15)
 
+def chessPiece(x, y, img):
+    gameDisplay.blit(img,(x,y))
 
 def gameMain():
     gameExit = False
+    blackBishop = pygame.image.load("pieces\\black_bishop.png")
  
     while not gameExit:
  
@@ -189,9 +222,27 @@ def gameMain():
                 quit()
 
         gameDisplay.fill(white)
+
+        # Add double for loop to make array of buttons
+        for x in range(0, 8):
+            for y in range(0, 8):
+                if x % 2 == 0:
+                    if y % 2 == 0:
+                        square("",(x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
+                    else:
+                        square("",(x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
+                else:
+                    if y % 2 == 0:
+                        square("",(x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,blackAI)
+                    else:
+                        square("",(x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,blackAI)
+        
+        chessPiece(220,435,blackBishop)
+
         pygame.display.update()
         clock.tick(15)
     #TODO make main gameboard
 
 # Make sure to remove this after
-gameIntro()
+#gameIntro()
+gameMain()
