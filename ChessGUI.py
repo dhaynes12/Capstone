@@ -9,7 +9,7 @@ import random # probably dont need
 from InputBox import *
 import os
 import Logic
-import Pieces
+import Pieces as P
 from Board import Board
  
 pygame.init() # Wont need later because main should have
@@ -225,7 +225,6 @@ def getCords(args):
 
 def gameMain():
     gameExit = False
-    blackBishop = pygame.image.load("pieces\\black_bishop.png")
  
     while not gameExit:
  
@@ -245,6 +244,7 @@ def gameMain():
                             square((x * 45 + 220),(435 - y * 45),45,45,darkGreen,darkBlue,selectSpace,(x,y))
                         else:
                             square((x * 45 + 220),(435 - y * 45),45,45,darkKhaki,skyBlue,selectSpace,(x,y))
+
                     else:
                         if y % 2 == 0:
                             square((x * 45 + 220),(435 - y * 45),45,45,darkKhaki,skyBlue,selectSpace,(x,y))
@@ -262,8 +262,12 @@ def gameMain():
                             square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,selectSpace,(x,y))
                         else:
                             square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,selectSpace,(x,y))
+
+                if (isinstance(state.board[x][y], P.Piece)):
+                    img = pygame.image.load(state.board[x][y].image)
+                    chessPiece((x * 45 + 220),(435 - y * 45),img)
+
         
-        chessPiece(220,435,blackBishop)
 
         pygame.display.update()
         clock.tick(15)
