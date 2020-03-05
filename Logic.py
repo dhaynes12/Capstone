@@ -1,5 +1,6 @@
 from Board import Board
 import Pieces as P
+from copy import deepcopy
 
 def select_piece(state, x, y):
     return state.board[x][y].validMoves(state, (x, y))
@@ -21,14 +22,21 @@ def move_piece(state, selX, selY, move):
         
         st.board[move.x()][move.y()+adjust] = P.Empty()   
     elif move.special == P.CASTLE:
+        rookY = 0
+        
+        if(state.turn == P.BLACK):
+            rookY = 7
+        
         if (move.x() == 2):
             st.board[3][0] = deepcopy(st.board[0][0])
             st.board[0][0] = P.Empty()
+            st.board[3][0].moved = True
         elif (move.x() == 6):
             st.board[5][0] = deepcopy(st.board[7][0])
             st.board[7][0] = P.Empty()
-    elif (isinstance(st.board[move.x()][move.y()], P.Pawn) and (piece.color == P.WHITE and move.y() == 7) or (piece.color == P.BLACK and move.y() == 0)):
-        promotion = Queen()
+            st.board[5][0].moved = True
+    elif (isinstance(st.board[move.x()][move.y()], P.Pawn) and ((piece.color == P.WHITE and move.y() == 7) or (piece.color == P.BLACK and move.y() == 0))):
+        promotion = P.Queen(piece.ident, piece.color)
         st.board[move.x()][move.y()] = promotion
         """Need to figure out how to let the user select the promotion"""
     
@@ -42,13 +50,13 @@ def move_piece(state, selX, selY, move):
         enemyKingId = st.whiteKingId
     
     """Check if the moving player's King wasn't put in danger. Throw out the board if he is in danger, and indicate this by returning None"""
-    king, kingSpace = P.searchForPiece(kingId, st)
+    king, kingSpace = P.searchForPiece(kingId, st.board)
     if ((st.turn == P.WHITE and kingSpace in P.getValidMoves(P.BLACK, st)) or (st.turn == P.BLACK and kingSpace in P.getValidMoves(P.WHITE, st))):
         return None
     
     st.whiteChecked = False
     st.blackChecked = False
-    
+    piece.moved = True
     set_check(st)
     
     st.turn = P.swapTurn(st.turn)
@@ -57,10 +65,17 @@ def move_piece(state, selX, selY, move):
 
 """Check if the opposing king is put in check, and sets the corresponding check boolean if they are in check"""
 def set_check(state):
-    enemyKing, enemyKingSpace = P.searchForPiece(kingId, st)
+    enemyKingId = 0
+    
+    if (state.turn == P.WHITE):
+        enemyKingId = state.blackKingId
+    elif (state.turn == P.BLACK):
+        enemyKingId = state.whiteKingId
+    
+    enemyKing, enemyKingSpace = P.searchForPiece(enemyKingId, state.board)
     if (state.turn == P.WHITE and enemyKingSpace in P.getValidMoves(P.WHITE, state)):
         state.blackChecked = True
-    elif (st.turn == P.BLACK and enemyKingSpace in P.getValidMoves(P.BLACK, st)):
+    elif (state.turn == P.BLACK and enemyKingSpace in P.getValidMoves(P.BLACK, state)):
         state.whiteChecked = True
 
 """Returns True if the king of the specified color cannot make any moves"""

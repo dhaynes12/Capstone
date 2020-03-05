@@ -16,6 +16,7 @@ pygame.init() # Wont need later because main should have
 
 # Variables for Gameplay
 selectMoves = []
+selectedSpace = None
 state = Board()
 
 # Display dimention -- Will need to change to match screen
@@ -119,8 +120,32 @@ def blackAI():
     blackPlayer = 1
 
 def selectSpace(coords):
+    global state
     global selectMoves
-    selectMoves = Logic.select_piece(state, coords[0], coords[1])
+    global selectedSpace
+    
+    space = state.board[coords[0]][coords[1]]
+    if isinstance(space, P.Piece) and state.turn == space.color:
+        selectedSpace = coords
+        selectMoves = Logic.select_piece(state, coords[0], coords[1])
+
+def makeMove(moveCoords):
+    global state
+    global selectMoves
+    global selectedSpace
+    
+    movement = selectMoves[selectMoves.index(moveCoords)]
+    
+    if state.turn == state.board[selectedSpace[0]][selectedSpace[1]].color:
+        newState = Logic.move_piece(state, selectedSpace[0], selectedSpace[1], movement)
+        print(newState)
+        
+        if newState == None:
+            return
+        
+        state = newState
+        selectedSpace = None
+        selectMoves.clear()
 
 # start button function
 def startGame(args):
@@ -224,6 +249,7 @@ def getCords(args):
         print(args)
 
 def gameMain():
+    global state
     gameExit = False
  
     while not gameExit:
@@ -241,15 +267,15 @@ def gameMain():
                     """Highlighted Buttons"""
                     if x % 2 == 0:
                         if y % 2 == 0:
-                            square((x * 45 + 220),(435 - y * 45),45,45,darkGreen,darkBlue,selectSpace,(x,y))
+                            square((x * 45 + 220),(435 - y * 45),45,45,darkGreen,darkBlue,makeMove,(x,y))
                         else:
-                            square((x * 45 + 220),(435 - y * 45),45,45,darkKhaki,skyBlue,selectSpace,(x,y))
+                            square((x * 45 + 220),(435 - y * 45),45,45,darkKhaki,skyBlue,makeMove,(x,y))
 
                     else:
                         if y % 2 == 0:
-                            square((x * 45 + 220),(435 - y * 45),45,45,darkKhaki,skyBlue,selectSpace,(x,y))
+                            square((x * 45 + 220),(435 - y * 45),45,45,darkKhaki,skyBlue,makeMove,(x,y))
                         else:
-                            square((x * 45 + 220),(435 - y * 45),45,45,darkGreen,darkBlue,selectSpace,(x,y))
+                            square((x * 45 + 220),(435 - y * 45),45,45,darkGreen,darkBlue,makeMove,(x,y))
                 else:
                     """Non-Highlighted Buttons"""
                     if x % 2 == 0:

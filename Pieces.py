@@ -109,9 +109,10 @@ def colorToStr(color):
     return "invalid"
 
 def searchForPiece(pieceId, board):
-    for space in board:
-        if (isinstance(space, Piece) and space.ident == pieceId):
-            return space, (x, y)
+    for x in range(0, 8):
+        for y in range(0, 8):
+            if (isinstance(board[x][y], Piece) and board[x][y].ident == pieceId):
+                return board[x][y], (x, y)
     
     return None, None
 
@@ -178,7 +179,6 @@ class Pawn(Piece):
         return False
     
     def validMoves(self, b, space, kingCheck=None):
-        
         v = []
         
         """Standard Movement"""
