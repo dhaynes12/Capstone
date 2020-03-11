@@ -293,6 +293,18 @@ def gameMain():
                     img = pygame.image.load(state.board[x][y].image)
                     chessPiece((x * 45 + 220),(435 - y * 45),img)
 
+        # Printing text to indicate check
+        # Need to add CHECKMATE check
+        if state.whiteChecked:
+            text = pygame.font.SysFont("agencyfb",25)
+            TextSurf, TextRect = textObjects("White is in check", text)
+            TextRect.center = ((display_width/2),(display_height/8))
+            gameDisplay.blit(TextSurf, TextRect)
+        elif state.blackChecked:
+            text = pygame.font.SysFont("agencyfb",25)
+            TextSurf, TextRect = textObjects("Black is in check", text)
+            TextRect.center = ((display_width/2),(display_height/8))
+            gameDisplay.blit(TextSurf, TextRect)
         
 
         pygame.display.update()
