@@ -22,19 +22,14 @@ def move_piece(state, selX, selY, move):
         
         st.board[move.x()][move.y()+adjust] = P.Empty()   
     elif move.special == P.CASTLE:
-        rookY = 0
-        
-        if(state.turn == P.BLACK):
-            rookY = 7
-        
         if (move.x() == 2):
-            st.board[3][0] = deepcopy(st.board[0][0])
-            st.board[0][0] = P.Empty()
-            st.board[3][0].moved = True
+            st.board[3][move.y()] = deepcopy(st.board[0][move.y()])
+            st.board[0][move.y()] = P.Empty()
+            st.board[3][move.y()].moved = True
         elif (move.x() == 6):
-            st.board[5][0] = deepcopy(st.board[7][0])
-            st.board[7][0] = P.Empty()
-            st.board[5][0].moved = True
+            st.board[5][move.y()] = deepcopy(st.board[7][move.y()])
+            st.board[7][move.y()] = P.Empty()
+            st.board[5][move.y()].moved = True
     elif (isinstance(st.board[move.x()][move.y()], P.Pawn) and ((piece.color == P.WHITE and move.y() == 7) or (piece.color == P.BLACK and move.y() == 0))):
         promotion = P.Queen(piece.ident, piece.color)
         st.board[move.x()][move.y()] = promotion

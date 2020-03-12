@@ -79,10 +79,15 @@ def lookLine(board, space, color, xIncrease, yIncrease):
 def getValidMoves(color, b, kingCheck = None):
     moves = []
 
+    #print("\nGETVALIDMOVES OUTPUT")
+    #print("--------------------")
     for x in range(0, 8):
         for y in range(0, 8):
             if (isinstance(b.board[x][y], Piece) and b.board[x][y].color == color):
-                moves.extend(b.board[x][y].validMoves(b, (x, y), kingCheck))
+                #print("PIECE: ", b.board[x][y], ",", b.board[x][y].color, ",",  x, ",", y)
+                moves.extend(b.board[x][y].validMoves(b, (x, y), True))
+                #for m in b.board[x][y].validMoves(b, (x, y), True):
+                #    print("\t", m)
     
     return moves
 
@@ -131,12 +136,12 @@ class Move():
         if (isinstance(compare, Move)):
             return self.space == compare.space and self.special == compare.special
         elif (isinstance(compare, tuple)):
-            return self.space == compare
+            return self.space[0] == compare[0] and self.space[1] == compare[1]
         
         raise TypeError
         
     def __str__(self):
-        return "Move: " + str(self.space) + " -- Special: " + str(self.special)
+        return "Move: " + "(" + str(self.space[0]) + ", " + str(self.space[1]) + ")" + " -- Special: " + str(self.special)
 
 """Used to indicate empty spaces, because None is used to indicate that a given set of coordinates are off the board"""
 class Empty():
