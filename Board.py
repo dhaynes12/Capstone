@@ -3,12 +3,14 @@ import Pieces as P
 class Board():
     def __init__(self, blank=False):
         self.board = []             # The game's current state, represented as a 2d array of Piece and Empty objects
-        self.prevBoards = []         # The game's previous states, from oldest to newest
+        self.prevBoards = []        # The game's previous states, from oldest to newest
         self.whiteChecked = False   # True when white's king is in check
         self.blackChecked = False   # True when black's king is in check
         self.turn = P.WHITE
         self.whiteKingId = 4
         self.blackKingId = 12
+        self.whiteTotalPieceVal = 0
+        self.blackTotalPieceVal = 0
         
         for x in range(0, 8):
             self.board.append([])
@@ -37,6 +39,14 @@ class Board():
             for i in range(0, 8):
                 self.board[i][1] = P.Pawn(16 + i, P.WHITE)
                 self.board[i][6] = P.Pawn(36 + i, P.BLACK)
+        
+        pieces, loc = self.getAllPieces()
+        for piece in pieces:
+            if piece.color == P.WHITE:
+                self.whiteTotalPieceVal += piece.value
+            elif piece.color == P.BLACK:
+                self.blackTotalPieceVal += piece.value
+        
 
     def getLastState(self, num = None):
         if len(self.prevBoards) <= 0:
@@ -61,3 +71,16 @@ class Board():
     def wipe(self):
         for space in self.board:
             space = P.Empty()
+    
+    def getAllPieces(self, selectColor=None):
+        pieces = []
+        locations = []
+        
+        for x in range(0, 8):
+            for y in range(0, 8):
+                sel = self.board[x][y]
+                if (isinstance(sel, P.Piece) and (selectColor == None or sel.color == selectColor)):
+                    pieces.append(sel)
+                    locations.append((x, y))
+        
+        return pieces, locations
