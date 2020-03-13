@@ -84,9 +84,16 @@ def is_checkmate(state, color):
         kingId = state.blackKingId
         enemyColor = P.WHITE
     
-    king, kingSpace = P.searchForPiece(kingId, state)
+    king, kingSpace = P.searchForPiece(kingId, state.board)
     
-    return king.validMoves(state, kingSpace) in P.getValidMoves(enemyColor, state)
+    checkmate = True
+    opponentMoves = P.getValidMoves(enemyColor, state)
+    for kingMove in king.validMoves(state, kingSpace):
+        if kingMove not in opponentMoves:
+            checkmate = False
+            break
+        
+    return checkmate
    
    
 def undo(state, movesBack):
