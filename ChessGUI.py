@@ -251,6 +251,7 @@ def getCords(args):
 def gameMain():
     global state
     gameExit = False
+    checkmate = False
  
     while not gameExit:
  
@@ -293,21 +294,38 @@ def gameMain():
                     img = pygame.image.load(state.board[x][y].image)
                     chessPiece((x * 45 + 220),(435 - y * 45),img)
 
-        # Printing text to indicate check
-        # Need to add CHECKMATE check
+        # Printing text to indicate check or checkmate
         if state.whiteChecked:
-            text = pygame.font.SysFont("agencyfb",25)
-            TextSurf, TextRect = textObjects("White is in check", text)
-            TextRect.center = ((display_width/2),(display_height/8))
-            gameDisplay.blit(TextSurf, TextRect)
+            if Logic.is_checkmate(state,state.turn) == True or checkmate == True:
+                text = pygame.font.SysFont("agencyfb",25)
+                TextSurf, TextRect = textObjects("Checkmate! Black Wins!", text)
+                TextRect.center = ((display_width/2),(display_height/8))
+                gameDisplay.blit(TextSurf, TextRect)
+                checkmate = True
+            else:
+                text = pygame.font.SysFont("agencyfb",25)
+                TextSurf, TextRect = textObjects("White is in check", text)
+                TextRect.center = ((display_width/2),(display_height/8))
+                gameDisplay.blit(TextSurf, TextRect)
         elif state.blackChecked:
-            text = pygame.font.SysFont("agencyfb",25)
-            TextSurf, TextRect = textObjects("Black is in check", text)
-            TextRect.center = ((display_width/2),(display_height/8))
-            gameDisplay.blit(TextSurf, TextRect)
+            if Logic.is_checkmate(state,state.turn) == True or checkmate == True:
+                text = pygame.font.SysFont("agencyfb",25)
+                TextSurf, TextRect = textObjects("Checkmate! White Wins!", text)
+                TextRect.center = ((display_width/2),(display_height/8))
+                gameDisplay.blit(TextSurf, TextRect)
+                checkmate = True
+            else:
+                text = pygame.font.SysFont("agencyfb",25)
+                TextSurf, TextRect = textObjects("Black is in check", text)
+                TextRect.center = ((display_width/2),(display_height/8))
+                gameDisplay.blit(TextSurf, TextRect)
         
 
         pygame.display.update()
+        # Wait 3 second then quit if checkmate - Might change to a function with play again button
+        if checkmate == True:
+            time.sleep(3)
+            quit()
         clock.tick(15)
     #TODO make main gameboard
 
