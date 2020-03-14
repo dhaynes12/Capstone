@@ -8,6 +8,13 @@ def select_piece(state, x, y):
 def move_piece(state, selX, selY, move):
     st = deepcopy(state)
     
+    """Update total piece value if there's a capture"""
+    if (isinstance(st.board[move.x()][move.y()], P.Piece)):
+        if st.board[move.x()][move.y()].color == P.WHITE:
+            st.whiteTotalPieceVal -= st.board[move.x()][move.y()].value
+        elif st.board[move.x()][move.y()].color == P.BLACK:
+            st.blackTotalPieceVal -= st.board[move.x()][move.y()].value
+    
     st.prevBoards.append(deepcopy(st.board))
     
     st.board[move.x()][move.y()] = deepcopy(st.board[selX][selY])
@@ -20,7 +27,11 @@ def move_piece(state, selX, selY, move):
         if (st.board[move.x()][move.y()].color == P.BLACK):
             adjust = 1
         
-        st.board[move.x()][move.y()+adjust] = P.Empty()   
+        if st.board[move.x()][move.y()+adjust].color == P.WHITE:
+            st.whiteTotalPieceVal -= 1
+        elif st.board[move.x()][move.y()+adjust].color == P.BLACK:
+            st.blackTotalPieceVal -= 1
+        st.board[move.x()][move.y()+adjust] = P.Empty()
     elif move.special == P.CASTLE:
         if (move.x() == 2):
             st.board[3][move.y()] = deepcopy(st.board[0][move.y()])
@@ -33,6 +44,10 @@ def move_piece(state, selX, selY, move):
     elif (isinstance(st.board[move.x()][move.y()], P.Pawn) and ((piece.color == P.WHITE and move.y() == 7) or (piece.color == P.BLACK and move.y() == 0))):
         promotion = P.Queen(piece.ident, piece.color)
         st.board[move.x()][move.y()] = promotion
+        if (piece.color == P.WHITE):
+            st.whiteTotalPieceVal += (P.QUEEN_VAL - P.PAWN_VAL)
+        elif (piece.color == P.BLACK):
+            st.blackTotalPieceVal += (P.QUEEN_VAL - P.PAWN_VAL)
         """Need to figure out how to let the user select the promotion"""
     
     kingId = 0

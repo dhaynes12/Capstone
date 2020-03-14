@@ -5,7 +5,7 @@ class InputBox:
     Uses w and h for width and height
     Uses ic for initial color and ac for action color (RGB color tuple)"""
 
-    def __init__(self, x, y, w, h, ic, ac, text=''):
+    def __init__(self, x, y, w, h, ic, ac, text='', ident=''):
         self.rect = pygame.Rect(x, y, w, h)
         self.width = w
         self.inactiveColor = ic
@@ -19,6 +19,7 @@ class InputBox:
                        pygame.K_KP6, pygame.K_KP7, pygame.K_KP8, pygame.K_KP9]
         self.numbers = [pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5,
                         pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9]
+        self.ident = ident
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -52,3 +53,9 @@ class InputBox:
         screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
         # Blit the rect.
         pygame.draw.rect(screen, self.color, self.rect, 2)
+    
+    def __int__(self):
+        if self.text == '':
+            return 0
+        
+        return int(self.text)

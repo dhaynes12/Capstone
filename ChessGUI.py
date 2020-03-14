@@ -11,6 +11,9 @@ import os
 import Logic
 import Pieces as P
 from Board import Board
+from DecisionTree import ABPruning, Node
+from copy import deepcopy
+import math
  
 pygame.init() # Wont need later because main should have
 
@@ -38,9 +41,14 @@ red = (200,0,0)
 green = (0,200,0)
 
 # Global Variables:
-# 0 for human, 1 for AI
 whitePlayer = None
 blackPlayer = None
+whiteDepth = 1
+blackDepth = 1
+
+# Constants
+HUMAN = 0
+AI = 1
 
 # Initilizing the display and setting the title of window
 gameDisplay = pygame.display.set_mode((display_width,display_height))
@@ -105,29 +113,34 @@ def quitgame():
 # Functions for White and Black player selection
 def whiteHuman():
     global whitePlayer
-    whitePlayer = 0
+    whitePlayer = HUMAN
 
 def whiteAI():
     global whitePlayer
-    whitePlayer = 1
+    whitePlayer = AI
 
 def blackHuman():
     global blackPlayer
-    blackPlayer = 0
+    blackPlayer = HUMAN
 
 def blackAI():
     global blackPlayer
-    blackPlayer = 1
+    blackPlayer = AI
 
 def selectSpace(coords):
     global state
     global selectMoves
     global selectedSpace
-    
     space = state.board[coords[0]][coords[1]]
     if isinstance(space, P.Piece) and state.turn == space.color:
         selectedSpace = coords
         selectMoves = Logic.select_piece(state, coords[0], coords[1])
+
+def selectSpaceHuman(coords):
+    global state
+    
+    if (state.turn == P.WHITE and whitePlayer == HUMAN) or (state.turn == P.BLACK and blackPlayer == HUMAN):    
+        selectSpace(coords)
 
 def makeMove(moveCoords):
     global state
@@ -138,7 +151,6 @@ def makeMove(moveCoords):
     
     if state.turn == state.board[selectedSpace[0]][selectedSpace[1]].color:
         newState = Logic.move_piece(state, selectedSpace[0], selectedSpace[1], movement)
-        print(newState)
         
         if newState == None:
             return
@@ -175,12 +187,14 @@ def startGame(args):
         gameMain()
 
 def gameIntro():
-
+    global whiteDepth
+    global blackDepth
+    
     intro = True
     
     # Input textbox initializations
-    inputBox1 = InputBox(200, 425, 50, 50, black, red)
-    inputBox2 = InputBox(550, 425, 50, 50, black, red)
+    inputBox1 = InputBox(200, 425, 50, 50, black, red, text=str(whiteDepth), ident=P.WHITE)
+    inputBox2 = InputBox(550, 425, 50, 50, black, red, text=str(blackDepth), ident=P.BLACK)
     inputBoxes = [inputBox1, inputBox2]
 
     while intro:
@@ -191,7 +205,11 @@ def gameIntro():
             for box in inputBoxes:
                 box.handle_event(event)
         for box in inputBoxes:
-            box.update()        
+            box.update()
+            if (box.ident == P.WHITE):
+                whiteDepth = int(box)
+            elif (box.ident == P.BLACK):
+                blackDepth = int(box)
         gameDisplay.fill(white)
         largeText = pygame.font.SysFont("agencyfb",115)
         TextSurf, TextRect = textObjects("Chess AI", largeText)
@@ -250,6 +268,11 @@ def getCords(args):
 
 def gameMain():
     global state
+    global selectMoves
+    global whitePlayer
+    global blackPlayer
+    global whiteDepth
+    global blackDepth
     gameExit = False
     checkmate = False
  
@@ -281,14 +304,14 @@ def gameMain():
                     """Non-Highlighted Buttons"""
                     if x % 2 == 0:
                         if y % 2 == 0:
-                            square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,selectSpace,(x,y))
+                            square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,selectSpaceHuman,(x,y))
                         else:
-                            square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,selectSpace,(x,y))
+                            square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,selectSpaceHuman,(x,y))
                     else:
                         if y % 2 == 0:
-                            square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,selectSpace,(x,y))
+                            square((x * 45 + 220),(435 - y * 45),45,45,lightGrey,skyBlue,selectSpaceHuman,(x,y))
                         else:
-                            square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,selectSpace,(x,y))
+                            square((x * 45 + 220),(435 - y * 45),45,45,sienna,darkBlue,selectSpaceHuman,(x,y))
 
                 if (isinstance(state.board[x][y], P.Piece)):
                     img = pygame.image.load(state.board[x][y].image)
@@ -326,6 +349,19 @@ def gameMain():
         if checkmate == True:
             time.sleep(3)
             quit()
+        elif (state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI):
+            # AI Control
+            depthLim = 0
+            if state.turn == P.WHITE:
+                depthLim = whiteDepth
+            elif state.turn == P.BLACK:
+                depthLim = blackDepth
+            tempNode = Node(state.turn, deepcopy(state), 0, depthLim)
+            
+            value, node = ABPruning(tempNode, -math.inf, math.inf)
+            selectSpace(node.space)
+            makeMove(node.move.space)
+            
         clock.tick(15)
     #TODO make main gameboard
 
