@@ -110,6 +110,17 @@ def quitgame():
     pygame.quit()
     quit()
 
+# Helper function to restart game
+def newGame():
+    global selectMoves
+    global selectedSpace
+    global state
+    selectMoves = []
+    selectedSpace = None
+    state = Board()
+    gameIntro()
+
+
 # Functions for White and Black player selection
 def whiteHuman():
     global whitePlayer
@@ -217,7 +228,7 @@ def gameIntro():
         gameDisplay.blit(TextSurf, TextRect)
 
         # Left side buttons - white
-        button("Human",65,350,100,50,green,red,whiteHuman) # still need function for toggle with other button
+        button("Human",65,350,100,50,green,red,whiteHuman)
         button("AI",65,425,100,50,green,red,whiteAI)
 
         # Left side circles
@@ -344,11 +355,11 @@ def gameMain():
                 gameDisplay.blit(TextSurf, TextRect)
         
 
-        pygame.display.update()
-        # Wait 3 second then quit if checkmate - Might change to a function with play again button
+
+        # Buttons for new game or exit after checkmate
         if checkmate == True:
-            time.sleep(3)
-            quit()
+            button("New Game",65,500,100,50,green,red,newGame)
+            button("Exit",635,500,100,50,red,green,quitgame)
         elif (state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI):
             # AI Control
             depthLim = 0
@@ -361,10 +372,7 @@ def gameMain():
             value, node = ABPruning(tempNode, -math.inf, math.inf)
             selectSpace(node.space)
             makeMove(node.move.space)
-            
-        clock.tick(15)
-    #TODO make main gameboard
 
-# Make sure to remove this after
-#gameIntro()
-#gameMain()
+        pygame.display.update()
+        clock.tick(15)
+            
