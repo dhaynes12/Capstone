@@ -227,6 +227,17 @@ def gameIntro():
         TextRect.center = ((display_width/2),(display_height/6))
         gameDisplay.blit(TextSurf, TextRect)
 
+        # Left side text
+        text = pygame.font.SysFont("agencyfb",25)
+        TextSurf, TextRect = textObjects("White", text)
+        TextRect.center = (115,320)
+        gameDisplay.blit(TextSurf, TextRect)
+
+        text = pygame.font.SysFont("agencyfb",16)
+        TextSurf, TextRect = textObjects("Look Ahead", text)
+        TextRect.center = (225,400)
+        gameDisplay.blit(TextSurf, TextRect)
+
         # Left side buttons - white
         button("Human",65,350,100,50,green,red,whiteHuman)
         button("AI",65,425,100,50,green,red,whiteAI)
@@ -246,6 +257,17 @@ def gameIntro():
 
         # Center Button
         button("Start",350,500,100,50,green,red,startGame, inputBoxes)
+
+        # Right side text
+        text = pygame.font.SysFont("agencyfb",25)
+        TextSurf, TextRect = textObjects("Black", text)
+        TextRect.center = (685,320)
+        gameDisplay.blit(TextSurf, TextRect)
+
+        text = pygame.font.SysFont("agencyfb",16)
+        TextSurf, TextRect = textObjects("Look Ahead", text)
+        TextRect.center = (575,400)
+        gameDisplay.blit(TextSurf, TextRect)
 
         # Right side buttons - Black
         button("Human",635,350,100,50,green,red,blackHuman)
@@ -360,7 +382,11 @@ def gameMain():
         if checkmate == True:
             button("New Game",65,500,100,50,green,red,newGame)
             button("Exit",635,500,100,50,red,green,quitgame)
-        elif (state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI):
+        
+
+        pygame.display.update()
+        clock.tick(15)
+        if ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and checkmate != True:
             # AI Control
             depthLim = 0
             if state.turn == P.WHITE:
@@ -372,7 +398,4 @@ def gameMain():
             value, node = ABPruning(tempNode, -math.inf, math.inf)
             selectSpace(node.space)
             makeMove(node.move.space)
-
-        pygame.display.update()
-        clock.tick(15)
             
