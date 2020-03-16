@@ -113,14 +113,17 @@ def is_checkmate(state, color):
     
     if checkmate:
         oppPieces, oppSpaces = piecesEndangeringSpace(state, opponentMoves, kingSpace)
-        for i in range(len(oppSpaces)):
-            if (type(oppPieces[i]) == P.Queen or type(oppPieces[i]) == P.Rook or type(oppPieces[i]) == P.Bishop):
-                for between in betweenSpaces(state, kingSpace, oppSpaces[i]):
+        
+        """As far as I know, it's possible for only one piece to directly endanger the King at a given time"""
+        if (len(oppPieces) > 1):
+            raise Exception("Somehow multiple pieces directly endangered the King, which would only happen if the King finished its turn still in check")
+        
+        if (type(oppPieces[0]) == P.Queen or type(oppPieces[0]) == P.Rook or type(oppPieces[0]) == P.Bishop):
+            for between in betweenSpaces(state, kingSpace, oppSpaces[0]):
                     if between in friendMoves:
                         checkmate = False
                         break
-                if not checkmate:
-                    break
+            
 	
     return checkmate
    
@@ -152,7 +155,7 @@ def piecesEndangeringSpace(state, movesList, space):
     pieces = []
     pieceSpaces = []
     for move in movesList:
-        if move.originSpace not in pieceSpaces:
+        if (move.originSpace not in pieceSpaces) and (space in state.getPiece(move.originSpace).validMoves(state, move.originSpace)):
             pieces.append(state.getPiece(move.originSpace))
             pieceSpaces.append(move.originSpace)
     
@@ -169,14 +172,14 @@ def betweenSpaces(state, space1, space2):
     """Diagonal Look"""
     if space1[0] != space2[0] and space1[1] != space2[1]:
         loops = 1
-        for x in range(minX+1, maxX):
+        for x in range(minX+1, maxX+1):
             spaces.append((x, minY+loops))
             loops += 1
     elif space1[0] == space2[0] and space1[1] != space2[1]:
-        for y in range(minY+1, maxY):
+        for y in range(minY+1, maxY+1):
             spaces.append((minX, y))
     elif space1[0] != space2[0] and space1[1] == space2[1]:
-        for x in range(minX+1, maxX):
+        for x in range(minX+1, maxX+1):
             spaces.append((x, minY))
     
     return spaces
