@@ -84,3 +84,6 @@ class Board():
                     locations.append((x, y))
         
         return pieces, locations
+    
+    def getPiece(self, space):
+        return self.board[space[0]][space[1]]

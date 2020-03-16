@@ -103,11 +103,25 @@ def is_checkmate(state, color):
     
     checkmate = True
     opponentMoves = P.getValidMoves(enemyColor, state)
+    friendMoves = P.getValidMoves(color, state, ignorePiece = king.ident)
     for kingMove in king.validMoves(state, kingSpace):
-        if kingMove not in opponentMoves:
+        if (kingMove not in opponentMoves):
+            if isinstance(state.getPiece(kingMove.space), P.Piece) and ((kingMove.space not in friendMoves) and (move_piece(state, kingSpace[0], kingSpace[1], kingMove) == None)):
+                continue
             checkmate = False
             break
-        
+    
+    if checkmate:
+        oppPieces, oppSpaces = piecesEndangeringSpace(state, opponentMoves, kingSpace)
+        for i in range(len(oppSpaces)):
+            if (type(oppPieces[i]) == P.Queen or type(oppPieces[i]) == P.Rook or type(oppPieces[i]) == P.Bishop):
+                for between in betweenSpaces(state, kingSpace, oppSpaces[i]):
+                    if between in friendMoves:
+                        checkmate = False
+                        break
+                if not checkmate:
+                    break
+	
     return checkmate
    
    
@@ -123,4 +137,46 @@ def undo(state, movesBack):
     set_check(st)
     
     return st
+
+
+def getPiecesMovesFromList(movesList, pieceSpace):
+	pieceMoves = []
+	for move in movesList:
+		if move.compareOriginSpace(pieceSpace):
+			pieceMoves.append(deepcopy(move))
+	
+	return pieceMoves
+	
+
+def piecesEndangeringSpace(state, movesList, space):
+    pieces = []
+    pieceSpaces = []
+    for move in movesList:
+        if move.originSpace not in pieceSpaces:
+            pieces.append(state.getPiece(move.originSpace))
+            pieceSpaces.append(move.originSpace)
     
+    return pieces, pieceSpaces
+
+"""Returns the spaces between two spaces. space1 and space2 must be aligned so that they are perfectly horizontal, vertical, or diagonal"""
+def betweenSpaces(state, space1, space2):
+    spaces = []
+    minX = min(space1[0], space2[0])
+    maxX = max(space1[0], space2[0])
+    minY = min(space1[1], space2[1])
+    maxY = max(space1[1], space2[1])
+    
+    """Diagonal Look"""
+    if space1[0] != space2[0] and space1[1] != space2[1]:
+        loops = 1
+        for x in range(minX+1, maxX):
+            spaces.append((x, minY+loops))
+            loops += 1
+    elif space1[0] == space2[0] and space1[1] != space2[1]:
+        for y in range(minY+1, maxY):
+            spaces.append((minX, y))
+    elif space1[0] != space2[0] and space1[1] == space2[1]:
+        for x in range(minX+1, maxX):
+            spaces.append((x, minY))
+    
+    return spaces
