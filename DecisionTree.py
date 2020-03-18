@@ -2,10 +2,19 @@ from Board import Board
 import Pieces as P
 import Logic
 from copy import deepcopy
+import time
+import math
+
+"""Global Values"""
+maxNodeDepth = 0
+totalNodes = 0
 
 class Node(object):
     
     def __init__(self, color, state, depth, depthLim, space = (0,0), move = P.Move((-1, -1))):
+        global totalNodes
+        totalNodes += 1
+    
         self.state = state          # board state of the node
         self.color = color          # whether the AI controls the white or black pieces.
         self.depth = depth          # current depth of node
@@ -21,12 +30,14 @@ class Node(object):
         if depth == depthLim:
             self.setWeight()
         else:       # else generate list of next possible moves
+            global maxNodeDepth
+            if (depth > maxNodeDepth):
+                maxNodeDepth = depth
             self.genNextMoves()
 
 
     def genNextMoves(self):
-        #print()
-        #print("Begin move generation")
+        
         pieces, locs = self.state.getAllPieces(self.state.turn)
         for i in range(0, len(pieces)):
             if not isinstance(pieces[i], P.Piece):
@@ -45,6 +56,27 @@ class Node(object):
             self.weight *= -1
         
         #print(self.move, " -- Piece: ", self.space, " -- Weight: ", self.weight)
+
+def aiSearch(state, depthLim):
+    global maxNodeDepth
+    global totalNodes
+    
+    startTime = time.perf_counter()
+    
+    tempNode = Node(state.turn, deepcopy(state), 0, depthLim)   
+    value, node = ABPruning(tempNode, -math.inf, math.inf)
+    
+    endTime = time.perf_counter()
+    
+    print("Calculation Time:", endTime - startTime, "seconds")
+    print("Max Node Depth:", maxNodeDepth)
+    print("Total Nodes:", totalNodes)
+    print()
+    
+    maxNodeDepth = 0
+    totalNodes = 0
+    
+    return node
 
 def ABPruning (node, alpha, beta):
     node.alpha = alpha

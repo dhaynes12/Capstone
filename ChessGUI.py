@@ -11,9 +11,8 @@ import os
 import Logic
 import Pieces as P
 from Board import Board
-from DecisionTree import ABPruning, Node
+from DecisionTree import ABPruning, Node, aiSearch
 from copy import deepcopy
-import math
  
 pygame.init() # Wont need later because main should have
 
@@ -388,14 +387,14 @@ def gameMain():
         clock.tick(15)
         if ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and checkmate != True:
             # AI Control
+            
             depthLim = 0
             if state.turn == P.WHITE:
                 depthLim = whiteDepth
             elif state.turn == P.BLACK:
                 depthLim = blackDepth
-            tempNode = Node(state.turn, deepcopy(state), 0, depthLim)
+                     
+            node = aiSearch(state, depthLim)
             
-            value, node = ABPruning(tempNode, -math.inf, math.inf)
             selectSpace(node.space)
             makeMove(node.move.space)
-            

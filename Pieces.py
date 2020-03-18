@@ -219,10 +219,10 @@ class Pawn(Piece):
         """En-Passent"""
         left = isOccupiedBy(b.board, space, (-1, 0))
         right = isOccupiedBy(b.board, space, (1, 0))
-        if (isinstance(left, Pawn) and self.validPassent(moveSpace(space, (-1, 0)), left.ident, b.getLastState())):
+        if (isinstance(left, Pawn) and self.validPassent(moveSpace(space, (-1, 0)), left.ident, b.prevBoard)):
             v.append(Move(moveSpace(space, (-1, self.upMove)), EN_PASSENT, originSpace=space))
             
-        if (isinstance(right, Pawn) and self.validPassent(moveSpace(space, (1, 0)), right.ident, b.getLastState())):
+        if (isinstance(right, Pawn) and self.validPassent(moveSpace(space, (1, 0)), right.ident, b.prevBoard)):
             v.append(Move(moveSpace(space, (1, self.upMove)), EN_PASSENT, originSpace=space))
         
         return v

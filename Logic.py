@@ -15,7 +15,7 @@ def move_piece(state, selX, selY, move):
         elif st.board[move.x()][move.y()].color == P.BLACK:
             st.blackTotalPieceVal -= st.board[move.x()][move.y()].value
     
-    st.prevBoards.append(deepcopy(st.board))
+    st.prevBoard = deepcopy(st.board)
     
     st.board[move.x()][move.y()] = deepcopy(st.board[selX][selY])
     st.board[selX][selY] = P.Empty()

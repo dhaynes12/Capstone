@@ -44,7 +44,7 @@ pawnCaptureAndPassent.board[5][5] = P.Pawn(2, P.BLACK, True)
 pCPPast.board[4][4] = P.Pawn(0, P.WHITE, True)
 pCPPast.board[3][6] = P.Pawn(1, P.BLACK)
 pCPPast.board[5][5] = P.Pawn(2, P.BLACK, True)
-pawnCaptureAndPassent.prevBoards.append(pCPPast.board)
+pawnCaptureAndPassent.prevBoard = pCPPast.board
 
 pawnStartBlack = deepcopy(board)
 pawnStartBlack.board[6][6] = P.Pawn(0, P.BLACK)
@@ -57,7 +57,7 @@ pawnCPBlack.board[5][2] = P.Pawn(2, P.WHITE, True)
 pCPBPast.board[4][4] = P.Pawn(0, P.BLACK, True)
 pCPBPast.board[3][1] = P.Pawn(1, P.WHITE)
 pCPBPast.board[5][2] = P.Pawn(2, P.WHITE, True)
-pawnCPBlack.prevBoards.append(pCPBPast.board)
+pawnCPBlack.prevBoard = pCPBPast.board
 
 pawnStartMoves = [
                     P.Move((1,2), P.NON_CAPTURE),

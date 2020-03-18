@@ -3,7 +3,7 @@ import Pieces as P
 class Board():
     def __init__(self, blank=False):
         self.board = []             # The game's current state, represented as a 2d array of Piece and Empty objects
-        self.prevBoards = []        # The game's previous states, from oldest to newest
+        self.prevBoard = None        # The game's previous state
         self.whiteChecked = False   # True when white's king is in check
         self.blackChecked = False   # True when black's king is in check
         self.turn = P.WHITE
@@ -46,27 +46,16 @@ class Board():
                 self.whiteTotalPieceVal += piece.value
             elif piece.color == P.BLACK:
                 self.blackTotalPieceVal += piece.value
-        
-
-    def getLastState(self, num = None):
-        if len(self.prevBoards) <= 0:
-            return None
-            
-        change = num
-        if num == None:
-            change = 1
-            
-        return self.prevBoards[len(self.prevBoards) - change]
     
-    def getAndRemoveLastState(self, num):
-        rem = self.prevBoards[len(self.prevBoards) - num]
-        for i in reversed(range(len(self.prevBoards) - 1, len(self.prevBoards) - num + 1)):
-            self.prevBoards.pop(i)
-        
-        return rem
-    
-    def getAndRemoveLastState(self):
-        return getAndRemoveLastState(self, 1)
+    #def getAndRemoveLastState(self, num):
+    #    rem = self.prevBoards[len(self.prevBoards) - num]
+    #    for i in reversed(range(len(self.prevBoards) - 1, len(self.prevBoards) - num + 1)):
+    #        self.prevBoards.pop(i)
+    #    
+    #    return rem
+    #
+    #def getAndRemoveLastState(self):
+    #    return getAndRemoveLastState(self, 1)
     
     def wipe(self):
         for space in self.board:
