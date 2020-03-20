@@ -37,27 +37,20 @@ pawnStartBlocked2 = deepcopy(pawnStart)
 pawnStartBlocked2.board[1][3] = P.Pawn(1, P.BLACK, True)
 
 pawnCaptureAndPassent = deepcopy(board)
-pCPPast = deepcopy(board)
 pawnCaptureAndPassent.board[4][4] = P.Pawn(0, P.WHITE, True)
 pawnCaptureAndPassent.board[3][4] = P.Pawn(1, P.BLACK, True)
 pawnCaptureAndPassent.board[5][5] = P.Pawn(2, P.BLACK, True)
-pCPPast.board[4][4] = P.Pawn(0, P.WHITE, True)
-pCPPast.board[3][6] = P.Pawn(1, P.BLACK)
-pCPPast.board[5][5] = P.Pawn(2, P.BLACK, True)
-pawnCaptureAndPassent.prevBoard = pCPPast.board
+pawnCaptureAndPassent.passentable = (3, 4)
 
 pawnStartBlack = deepcopy(board)
 pawnStartBlack.board[6][6] = P.Pawn(0, P.BLACK)
 
 pawnCPBlack= deepcopy(board)
-pCPBPast = deepcopy(board)
 pawnCPBlack.board[4][3] = P.Pawn(0, P.BLACK, True)
 pawnCPBlack.board[3][3] = P.Pawn(1, P.WHITE, True)
 pawnCPBlack.board[5][2] = P.Pawn(2, P.WHITE, True)
-pCPBPast.board[4][4] = P.Pawn(0, P.BLACK, True)
-pCPBPast.board[3][1] = P.Pawn(1, P.WHITE)
-pCPBPast.board[5][2] = P.Pawn(2, P.WHITE, True)
-pawnCPBlack.prevBoard = pCPBPast.board
+pawnCPBlack.passentable = (3, 3)
+
 
 pawnStartMoves = [
                     P.Move((1,2), P.NON_CAPTURE),

@@ -186,13 +186,15 @@ class Pawn(Piece):
         else:
             self.upMove = -1
     
-    def validPassent(self, pawnSpace, pawnId, pastBoard):
-        upTwo = isOccupiedBy(pastBoard, pawnSpace, (0, self.upMove * 2))
+
+    def validPassent(self, b, pawnSpace):
+        if (b.passentable == None):
+            return False
+    
+        pasX, pasY = b.passentable
+        pawX, pawY = pawnSpace
         
-        if (isinstance(upTwo, Pawn) and upTwo.ident == pawnId and not upTwo.moved):
-            return True
-        
-        return False
+        return pasX == pawX and pasY == pawY
     
     def validMoves(self, b, space, kingCheck=None):
         v = []
@@ -219,10 +221,10 @@ class Pawn(Piece):
         """En-Passent"""
         left = isOccupiedBy(b.board, space, (-1, 0))
         right = isOccupiedBy(b.board, space, (1, 0))
-        if (isinstance(left, Pawn) and self.validPassent(moveSpace(space, (-1, 0)), left.ident, b.prevBoard)):
+        if (isinstance(left, Pawn) and self.validPassent(b, (space[0] - 1, space[1]))):
             v.append(Move(moveSpace(space, (-1, self.upMove)), EN_PASSENT, originSpace=space))
             
-        if (isinstance(right, Pawn) and self.validPassent(moveSpace(space, (1, 0)), right.ident, b.prevBoard)):
+        if (isinstance(right, Pawn) and self.validPassent(b, (space[0] + 1, space[1]))):
             v.append(Move(moveSpace(space, (1, self.upMove)), EN_PASSENT, originSpace=space))
         
         return v

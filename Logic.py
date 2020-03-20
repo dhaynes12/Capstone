@@ -15,12 +15,10 @@ def move_piece(state, selX, selY, move):
         elif st.board[move.x()][move.y()].color == P.BLACK:
             st.blackTotalPieceVal -= st.board[move.x()][move.y()].value
     
-    st.prevBoard = deepcopy(st.board)
-    
-    st.board[move.x()][move.y()] = deepcopy(st.board[selX][selY])
+    st.board[move.x()][move.y()] = st.board[selX][selY]
     st.board[selX][selY] = P.Empty()
     
-    piece = st.board[move.x()][move.y()]
+    piece = st.board[move.x()][move.y()] 
     
     if move.special == P.EN_PASSENT:
         adjust = -1
@@ -63,6 +61,13 @@ def move_piece(state, selX, selY, move):
     king, kingSpace = P.searchForPiece(kingId, st.board)
     if ((st.turn == P.WHITE and kingSpace in P.getValidMoves(P.BLACK, st)) or (st.turn == P.BLACK and kingSpace in P.getValidMoves(P.WHITE, st))):
         return None
+    
+    if (st.passentable != None):
+        st.passentable = None
+    
+    """Determining if the pawn that just moved can suffer from en-passenting"""
+    if (isinstance(piece, P.Pawn) and (not piece.moved and abs(selY - move.y()) == 2)):
+        st.passentable = move.space
     
     st.whiteChecked = False
     st.blackChecked = False

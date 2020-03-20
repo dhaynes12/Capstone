@@ -3,7 +3,6 @@ import Pieces as P
 class Board():
     def __init__(self, blank=False):
         self.board = []             # The game's current state, represented as a 2d array of Piece and Empty objects
-        self.prevBoard = None        # The game's previous state
         self.whiteChecked = False   # True when white's king is in check
         self.blackChecked = False   # True when black's king is in check
         self.turn = P.WHITE
@@ -11,6 +10,7 @@ class Board():
         self.blackKingId = 12
         self.whiteTotalPieceVal = 0
         self.blackTotalPieceVal = 0
+        self.passentable = None
         
         for x in range(0, 8):
             self.board.append([])
