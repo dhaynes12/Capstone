@@ -1,6 +1,7 @@
 import Pieces as P
 
 class Board():
+
     def __init__(self, blank=False):
         self.board = []             # The game's current state, represented as a 2d array of Piece and Empty objects
         self.whiteChecked = False   # True when white's king is in check
@@ -76,3 +77,17 @@ class Board():
     
     def getPiece(self, space):
         return self.board[space[0]][space[1]]
+
+    def copy(self):
+        cpyBoard = Board(True)
+        cpyBoard.board = [row[:] for row in self.board]
+        cpyBoard.whiteChecked = self.whiteChecked
+        cpyBoard.blackChecked = self.blackChecked
+        cpyBoard.turn = self.turn
+        cpyBoard.whiteKingId = self.whiteKingId
+        cpyBoard.blackKingId = self.blackKingId
+        cpyBoard.whiteTotalPieceVal = self.whiteTotalPieceVal
+        cpyBoard.blackTotalPieceVal = self.blackTotalPieceVal
+        cpyBoard.passentable = self.passentable
+
+        return cpyBoard
