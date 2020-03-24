@@ -1,6 +1,6 @@
 import pytest
-import Pieces as P
 import Board as B
+import Pieces as P
 from copy import deepcopy
 
 def compareMoveLists(moves1, moves2):
@@ -31,25 +31,33 @@ pawnStart = deepcopy(board)
 pawnStart.board[1][1] = P.Pawn(0, P.WHITE)
 
 pawnStartBlocked1 = deepcopy(pawnStart)
-pawnStartBlocked1.board[1][2] = P.Pawn(1, P.BLACK, True)
+pawnStartBlocked1.board[1][2] = P.Pawn(1, P.BLACK)
+pawnStartBlocked1.unmoved.remove(1)
 
 pawnStartBlocked2 = deepcopy(pawnStart)
-pawnStartBlocked2.board[1][3] = P.Pawn(1, P.BLACK, True)
+pawnStartBlocked2.board[1][3] = P.Pawn(1, P.BLACK)
+pawnStartBlocked2.unmoved.remove(1)
 
 pawnCaptureAndPassent = deepcopy(board)
-pawnCaptureAndPassent.board[4][4] = P.Pawn(0, P.WHITE, True)
-pawnCaptureAndPassent.board[3][4] = P.Pawn(1, P.BLACK, True)
-pawnCaptureAndPassent.board[5][5] = P.Pawn(2, P.BLACK, True)
+pawnCaptureAndPassent.board[4][4] = P.Pawn(0, P.WHITE)
+pawnCaptureAndPassent.board[3][4] = P.Pawn(1, P.BLACK)
+pawnCaptureAndPassent.board[5][5] = P.Pawn(2, P.BLACK)
 pawnCaptureAndPassent.passentable = (3, 4)
+pawnCaptureAndPassent.unmoved.remove(0)
+pawnCaptureAndPassent.unmoved.remove(1)
+pawnCaptureAndPassent.unmoved.remove(2)
 
 pawnStartBlack = deepcopy(board)
 pawnStartBlack.board[6][6] = P.Pawn(0, P.BLACK)
 
 pawnCPBlack= deepcopy(board)
-pawnCPBlack.board[4][3] = P.Pawn(0, P.BLACK, True)
-pawnCPBlack.board[3][3] = P.Pawn(1, P.WHITE, True)
-pawnCPBlack.board[5][2] = P.Pawn(2, P.WHITE, True)
+pawnCPBlack.board[4][3] = P.Pawn(0, P.BLACK)
+pawnCPBlack.board[3][3] = P.Pawn(1, P.WHITE)
+pawnCPBlack.board[5][2] = P.Pawn(2, P.WHITE)
 pawnCPBlack.passentable = (3, 3)
+pawnCPBlack.unmoved.remove(0)
+pawnCPBlack.unmoved.remove(1)
+pawnCPBlack.unmoved.remove(2)
 
 
 pawnStartMoves = [
@@ -76,16 +84,21 @@ pCPBMoves = [
 
 """------------KNIGHT TESTS----------"""
 knightCenter = deepcopy(board)
-knightCenter.board[3][3] = P.Knight(0, P.WHITE, True)
+knightCenter.board[3][3] = P.Knight(0, P.WHITE)
+knightCenter.unmoved.remove(0)
 
 knightCenter2 = deepcopy(knightCenter)
 knightCenter2.board[2][1] = P.Pawn(1, P.WHITE)
-knightCenter2.board[5][4] = P.Knight(2, P.WHITE, True)
-knightCenter2.board[1][2] = P.Queen(3, P.BLACK, True)
-knightCenter2.board[4][1] = P.Bishop(4, P.BLACK, True)
+knightCenter2.board[5][4] = P.Knight(2, P.WHITE)
+knightCenter2.board[1][2] = P.Queen(3, P.BLACK)
+knightCenter2.board[4][1] = P.Bishop(4, P.BLACK)
+knightCenter2.unmoved.remove(2)
+knightCenter2.unmoved.remove(3)
+knightCenter2.unmoved.remove(4)
 
 knightCorner = deepcopy(board)
-knightCorner.board[0][7] = P.Knight(0, P.BLACK, True)
+knightCorner.board[0][7] = P.Knight(0, P.BLACK)
+knightCorner.unmoved.remove(0)
 
 
 knCMoves = [
@@ -116,11 +129,14 @@ knCornerMoves = [
 
 """------------BISHOP TESTS----------"""
 bishopCenter = deepcopy(board)
-bishopCenter.board[5][4] = P.Bishop(0, P.WHITE, True)
+bishopCenter.board[5][4] = P.Bishop(0, P.WHITE)
+bishopCenter.unmoved.remove(0)
 
 bishopCenter2 = deepcopy(bishopCenter)
-bishopCenter2.board[3][2] = P.Queen(1, P.BLACK, True)
-bishopCenter2.board[4][5] = P.Queen(2, P.WHITE, True)
+bishopCenter2.board[3][2] = P.Queen(1, P.BLACK)
+bishopCenter2.board[4][5] = P.Queen(2, P.WHITE)
+bishopCenter2.unmoved.remove(1)
+bishopCenter2.unmoved.remove(2)
 
 bCMoves = [
             P.Move((1,0)),
@@ -148,13 +164,17 @@ bC2Moves = [
 
 """------------ROOK TESTS----------"""
 rookCenter = deepcopy(board)
-rookCenter.board[3][3] = P.Rook(0, P.WHITE, True)
+rookCenter.board[3][3] = P.Rook(0, P.WHITE)
+rookCenter.unmoved.remove(0)
 
 rookCenter2 = deepcopy(rookCenter)
-rookCenter2.board[2][3] = P.Pawn(1, P.WHITE, True)
+rookCenter2.board[2][3] = P.Pawn(1, P.WHITE)
 rookCenter2.board[3][1] = P.Pawn(2, P.WHITE)
-rookCenter2.board[3][4] = P.Pawn(3, P.BLACK, True)
-rookCenter2.board[5][3] = P.Pawn(4, P.BLACK, True)
+rookCenter2.board[3][4] = P.Pawn(3, P.BLACK)
+rookCenter2.board[5][3] = P.Pawn(4, P.BLACK)
+rookCenter2.unmoved.remove(1)
+rookCenter2.unmoved.remove(3)
+rookCenter2.unmoved.remove(4)
 
 rCMoves = [
             P.Move((0,3)),
@@ -183,15 +203,22 @@ rC2Moves = [
 
 """------------QUEEN TESTS----------"""
 queenCenter = deepcopy(board)
-queenCenter.board[3][3] = P.Queen(0, P.WHITE, True)
-queenCenter.board[2][3] = P.Pawn(1, P.WHITE, True)
+queenCenter.board[3][3] = P.Queen(0, P.WHITE)
+queenCenter.board[2][3] = P.Pawn(1, P.WHITE)
 queenCenter.board[3][1] = P.Pawn(2, P.WHITE)
 queenCenter.board[1][1] = P.Pawn(3, P.WHITE)
-queenCenter.board[2][4] = P.Pawn(4, P.WHITE, True)
-queenCenter.board[3][4] = P.Pawn(5, P.BLACK, True)
-queenCenter.board[5][3] = P.Pawn(6, P.BLACK, True)
-queenCenter.board[4][2] = P.Pawn(7, P.BLACK, True)
-queenCenter.board[5][5] = P.Pawn(8, P.BLACK, True)
+queenCenter.board[2][4] = P.Pawn(4, P.WHITE)
+queenCenter.board[3][4] = P.Pawn(5, P.BLACK)
+queenCenter.board[5][3] = P.Pawn(6, P.BLACK)
+queenCenter.board[4][2] = P.Pawn(7, P.BLACK)
+queenCenter.board[5][5] = P.Pawn(8, P.BLACK)
+queenCenter.unmoved.remove(0)
+queenCenter.unmoved.remove(1)
+queenCenter.unmoved.remove(4)
+queenCenter.unmoved.remove(5)
+queenCenter.unmoved.remove(6)
+queenCenter.unmoved.remove(7)
+queenCenter.unmoved.remove(8)
 
 qCMoves = [
             P.Move((4,3)),
@@ -207,7 +234,8 @@ qCMoves = [
 
 """------------KING TESTS----------"""
 kingCenter = deepcopy(board)
-kingCenter.board[3][3] = P.King(0, P.WHITE, True)
+kingCenter.board[3][3] = P.King(0, P.WHITE)
+kingCenter.unmoved.remove(0)
 
 kingCastle = deepcopy(board)
 kingCastle.board[4][0] = P.King(0, P.WHITE)
@@ -215,11 +243,13 @@ kingCastle.board[0][0] = P.Rook(1, P.WHITE)
 kingCastle.board[7][0] = P.Rook(2, P.WHITE)
 
 kingCastleOpposed = deepcopy(kingCastle)
-kingCastleOpposed.board[3][1] = P.Pawn(3, P.BLACK, True)
+kingCastleOpposed.board[3][1] = P.Pawn(3, P.BLACK)
 kingCastleOpposed.whiteChecked = True
+kingCastleOpposed.unmoved.remove(3)
 
 kingCastleOpposed2 = deepcopy(kingCastle)
-kingCastleOpposed2.board[3][1] = P.Rook(3, P.BLACK, True)
+kingCastleOpposed2.board[3][1] = P.Rook(3, P.BLACK)
+kingCastleOpposed2.unmoved.remove(3)
 
 kingCastleOpposed3 = deepcopy(kingCastle)
 kingCastleOpposed3.board[3][0] = P.Queen(3, P.WHITE)
@@ -271,29 +301,30 @@ kCO3Moves = [
 
 
 @pytest.mark.parametrize(
-    "b,tX,tY,expectedMoves",
+    "b,tX,tY,expectedMoves,n",
     [
-        (pawnStart, 1, 1, pawnStartMoves),
-        (pawnStartBlocked1, 1, 1, pSB1Moves),
-        (pawnStartBlocked2, 1, 1, pSB2Moves),
-        (pawnCaptureAndPassent, 4, 4, pCPMoves),
-        (pawnStartBlack, 6, 6, pawnStartBlackMoves),
-        (pawnCPBlack, 4, 3, pCPBMoves),
-        (knightCenter, 3, 3, knCMoves),
-        (knightCenter2, 3, 3, knC2Moves),
-        (knightCorner, 0, 7, knCornerMoves),
-        (bishopCenter, 5, 4, bCMoves),
-        (bishopCenter2, 5, 4, bC2Moves),
-        (rookCenter, 3, 3, rCMoves),
-        (rookCenter2, 3, 3, rC2Moves),
-        (queenCenter, 3, 3, qCMoves),
-        (kingCenter, 3, 3, kCenterMoves),
-        (kingCastle, 4, 0, kCastleMoves),
-        (kingCastleOpposed, 4, 0, kCOMoves),
-        (kingCastleOpposed2, 4, 0, kCO2Moves),
-        (kingCastleOpposed3, 4, 0, kCO3Moves)
+        (pawnStart, 1, 1, pawnStartMoves, 1),
+        (pawnStartBlocked1, 1, 1, pSB1Moves, 2),
+        (pawnStartBlocked2, 1, 1, pSB2Moves, 3),
+        (pawnCaptureAndPassent, 4, 4, pCPMoves, 4),
+        (pawnStartBlack, 6, 6, pawnStartBlackMoves, 5),
+        (pawnCPBlack, 4, 3, pCPBMoves, 6),
+        (knightCenter, 3, 3, knCMoves, 7),
+        (knightCenter2, 3, 3, knC2Moves, 8),
+        (knightCorner, 0, 7, knCornerMoves, 9),
+        (bishopCenter, 5, 4, bCMoves, 10),
+        (bishopCenter2, 5, 4, bC2Moves, 11),
+        (rookCenter, 3, 3, rCMoves, 12),
+        (rookCenter2, 3, 3, rC2Moves, 13),
+        (queenCenter, 3, 3, qCMoves, 14),
+        (kingCenter, 3, 3, kCenterMoves, 15),
+        (kingCastle, 4, 0, kCastleMoves, 16),
+        (kingCastleOpposed, 4, 0, kCOMoves, 17),
+        (kingCastleOpposed2, 4, 0, kCO2Moves, 18),
+        (kingCastleOpposed3, 4, 0, kCO3Moves, 19)
     ]
 )
-def test_move(b, tX, tY, expectedMoves):
+def test_move(b, tX, tY, expectedMoves, n):
+    #pytest.set_trace()
     moves = b.board[tX][tY].validMoves(b, (tX, tY))
-    assert compareMoveLists(moves, expectedMoves) == True
+    assert n == n and compareMoveLists(moves, expectedMoves) == True

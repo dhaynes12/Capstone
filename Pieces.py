@@ -164,12 +164,11 @@ class Empty():
 
 """The class which all chess pieces inherit from"""
 class Piece():
-    def __init__(self, ident, color, moved, value, image):
+    def __init__(self, ident, color, value, image):
         self.ident = ident
         self.color = color
         self.value = value
         self.image = image
-        self.moved = moved
     
     """b - The Board object that represents the current state of the game and contains prior states.
        space - A tuple of x and y coordinates which represent the piece's current space
@@ -178,8 +177,8 @@ class Piece():
         return []
 
 class Pawn(Piece):
-    def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, PAWN_VAL, "pieces/" + colorToStr(color) + "_pawn.png")
+    def __init__(self, ident, color):
+        Piece.__init__(self, ident, color, PAWN_VAL, "pieces/" + colorToStr(color) + "_pawn.png")
         
         if (self.color == WHITE):
             self.upMove = 1
@@ -204,7 +203,7 @@ class Pawn(Piece):
             v.append(Move(moveSpace(space, (0, self.upMove)), NON_CAPTURE, originSpace=space))
         
         """Double Move"""
-        if (not self.moved and 
+        if (b.pieceUnmoved(self.ident) and 
         isinstance(isOccupiedBy(b.board, space, (0, self.upMove)), Empty) and 
         isinstance(isOccupiedBy(b.board, space, (0, self.upMove * 2)), Empty)):            
             v.append(Move(moveSpace(space, (0, self.upMove * 2)), NON_CAPTURE, originSpace=space))
@@ -230,8 +229,8 @@ class Pawn(Piece):
         return v
 
 class Knight(Piece):
-    def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, KNIGHT_VAL, "pieces/" + colorToStr(color) + "_knight.png")
+    def __init__(self, ident, color):
+        Piece.__init__(self, ident, color, KNIGHT_VAL, "pieces/" + colorToStr(color) + "_knight.png")
     
     def validMoves(self, b, space, kingCheck=None):
         
@@ -256,8 +255,8 @@ class Knight(Piece):
         return v
 
 class Bishop(Piece):
-    def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, BISHOP_VAL, "pieces/" + colorToStr(color) + "_bishop.png")
+    def __init__(self, ident, color):
+        Piece.__init__(self, ident, color, BISHOP_VAL, "pieces/" + colorToStr(color) + "_bishop.png")
     
     def validMoves(self, b, space, kingCheck=None):
         
@@ -271,8 +270,8 @@ class Bishop(Piece):
         return v
 
 class Rook(Piece):
-    def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, ROOK_VAL, "pieces/" + colorToStr(color) + "_rook.png")
+    def __init__(self, ident, color):
+        Piece.__init__(self, ident, color, ROOK_VAL, "pieces/" + colorToStr(color) + "_rook.png")
     
     def validMoves(self, b, space, kingCheck=None):
         
@@ -286,8 +285,8 @@ class Rook(Piece):
         return v
 
 class Queen(Piece):
-    def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, QUEEN_VAL, "pieces/" + colorToStr(color) + "_queen.png")
+    def __init__(self, ident, color):
+        Piece.__init__(self, ident, color, QUEEN_VAL, "pieces/" + colorToStr(color) + "_queen.png")
     
     def validMoves(self, b, space, kingCheck=None):
         
@@ -305,8 +304,8 @@ class Queen(Piece):
         return v
 
 class King(Piece):
-    def __init__(self, ident, color, moved=False):
-        Piece.__init__(self, ident, color, moved, KING_VAL, "pieces/" + colorToStr(color) + "_king.png")
+    def __init__(self, ident, color):
+        Piece.__init__(self, ident, color, KING_VAL, "pieces/" + colorToStr(color) + "_king.png")
         
         if (self.color == WHITE):
             self.upMove = 1
@@ -339,12 +338,12 @@ class King(Piece):
             leftRookSpace = b.board[0][space[1]]
             rightRookSpace = b.board[7][space[1]]
             
-            leftRookUnmoved = isinstance(leftRookSpace, Rook) and not leftRookSpace.moved
-            rightRookUnmoved = isinstance(rightRookSpace, Rook) and not rightRookSpace.moved
+            leftRookUnmoved = isinstance(leftRookSpace, Rook) and b.pieceUnmoved(leftRookSpace.ident)
+            rightRookUnmoved = isinstance(rightRookSpace, Rook) and b.pieceUnmoved(rightRookSpace.ident)
             
             checked = (b.whiteChecked and self.color == WHITE) or (b.blackChecked and self.color == BLACK)
             
-            if (not checked and not self.moved and (leftRookUnmoved or rightRookUnmoved)):
+            if (not checked and b.pieceUnmoved(self.ident) and (leftRookUnmoved or rightRookUnmoved)):
                 opposer = WHITE
                 if (self.color == WHITE):
                     opposer = BLACK

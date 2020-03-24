@@ -1,6 +1,6 @@
 import pytest
-import Pieces as P
 import Board as B
+import Pieces as P
 import Logic
 
 testCase1 = B.Board()

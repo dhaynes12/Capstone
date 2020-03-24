@@ -1,11 +1,32 @@
 import Pieces as P
 
+W_ROOKS = [P.Rook(0, P.WHITE), P.Rook(5, P.WHITE)]
+W_KNIGHTS = [P.Knight(1, P.WHITE), P.Knight(6, P.WHITE)]
+W_BISHOPS = [P.Bishop(2, P.WHITE), P.Bishop(7, P.WHITE)]
+W_QUEEN = P.Queen(3, P.WHITE)
+W_KING = P.King(4, P.WHITE)
+W_PAWNS = []
+
+B_ROOKS = [P.Rook(8, P.BLACK), P.Rook(13, P.BLACK)]
+B_KNIGHTS = [P.Knight(9, P.BLACK), P.Knight(14, P.BLACK)]
+B_BISHOPS = [P.Bishop(10, P.BLACK), P.Bishop(15, P.BLACK)]
+B_QUEEN = P.Queen(11, P.BLACK)
+B_KING = P.King(12, P.BLACK)
+B_PAWNS = []
+
+EMPTY = P.Empty()
+
+for i in range(0, 8):
+    W_PAWNS.append(P.Pawn(16 + i, P.WHITE))
+    B_PAWNS.append(P.Pawn(24 + i, P.BLACK))
+
 class Board():
 
     def __init__(self, blank=False):
-        self.board = []             # The game's current state, represented as a 2d array of Piece and Empty objects
-        self.whiteChecked = False   # True when white's king is in check
-        self.blackChecked = False   # True when black's king is in check
+        self.board = []                     # The game's current state, represented as a 2d array of Piece and Empty objects
+        self.unmoved = list(range(0, 32))   # The ids of all pieces that haven't moved
+        self.whiteChecked = False           # True when white's king is in check
+        self.blackChecked = False           # True when black's king is in check
         self.turn = P.WHITE
         self.whiteKingId = 4
         self.blackKingId = 12
@@ -16,30 +37,30 @@ class Board():
         for x in range(0, 8):
             self.board.append([])
             for y in range(0, 8):
-                self.board[x].append(P.Empty())
+                self.board[x].append(EMPTY)
         
         if (not blank):
-            self.board[0][0] = P.Rook(0, P.WHITE)
-            self.board[1][0] = P.Knight(1, P.WHITE)
-            self.board[2][0] = P.Bishop(2, P.WHITE)
-            self.board[3][0] = P.Queen(3, P.WHITE)
-            self.board[4][0] = P.King(4, P.WHITE)
-            self.board[7][0] = P.Rook(5, P.WHITE)
-            self.board[6][0] = P.Knight(6, P.WHITE)
-            self.board[5][0] = P.Bishop(7, P.WHITE)
+            self.board[0][0] = W_ROOKS[0]
+            self.board[1][0] = W_KNIGHTS[0]
+            self.board[2][0] = W_BISHOPS[0]
+            self.board[3][0] = W_QUEEN
+            self.board[4][0] = W_KING
+            self.board[7][0] = W_ROOKS[1]
+            self.board[6][0] = W_KNIGHTS[1]
+            self.board[5][0] = W_BISHOPS[1]
             
-            self.board[0][7] = P.Rook(8, P.BLACK)
-            self.board[1][7] = P.Knight(9, P.BLACK)
-            self.board[2][7] = P.Bishop(10, P.BLACK)
-            self.board[3][7] = P.Queen(11, P.BLACK)
-            self.board[4][7] = P.King(12, P.BLACK)
-            self.board[7][7] = P.Rook(13, P.BLACK)
-            self.board[6][7] = P.Knight(14, P.BLACK)
-            self.board[5][7] = P.Bishop(15, P.BLACK)
+            self.board[0][7] = B_ROOKS[0]
+            self.board[1][7] = B_KNIGHTS[0]
+            self.board[2][7] = B_BISHOPS[0]
+            self.board[3][7] = B_QUEEN
+            self.board[4][7] = B_KING
+            self.board[7][7] = B_ROOKS[1]
+            self.board[6][7] = B_KNIGHTS[1]
+            self.board[5][7] = B_BISHOPS[1]
             
             for i in range(0, 8):
-                self.board[i][1] = P.Pawn(16 + i, P.WHITE)
-                self.board[i][6] = P.Pawn(36 + i, P.BLACK)
+                self.board[i][1] = W_PAWNS[i]
+                self.board[i][6] = B_PAWNS[i]
         
         pieces, loc = self.getAllPieces()
         for piece in pieces:
@@ -91,3 +112,6 @@ class Board():
         cpyBoard.passentable = self.passentable
 
         return cpyBoard
+    
+    def pieceUnmoved(self, pieceIdent):
+        return self.unmoved.count(pieceIdent)

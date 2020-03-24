@@ -1,4 +1,4 @@
-from Board import Board
+from Board import Board, EMPTY
 import Pieces as P
 from copy import deepcopy
 
@@ -16,7 +16,7 @@ def move_piece(state, selX, selY, move):
             st.blackTotalPieceVal -= st.board[move.x()][move.y()].value
     
     st.board[move.x()][move.y()] = st.board[selX][selY]
-    st.board[selX][selY] = P.Empty()
+    st.board[selX][selY] = EMPTY
     
     piece = st.board[move.x()][move.y()] 
     
@@ -29,16 +29,16 @@ def move_piece(state, selX, selY, move):
             st.whiteTotalPieceVal -= 1
         elif st.board[move.x()][move.y()+adjust].color == P.BLACK:
             st.blackTotalPieceVal -= 1
-        st.board[move.x()][move.y()+adjust] = P.Empty()
+        st.board[move.x()][move.y()+adjust] = EMPTY
     elif move.special == P.CASTLE:
         if (move.x() == 2):
-            st.board[3][move.y()] = deepcopy(st.board[0][move.y()])
-            st.board[0][move.y()] = P.Empty()
-            st.board[3][move.y()].moved = True
+            st.board[3][move.y()] = st.board[0][move.y()]
+            st.board[0][move.y()] = EMPTY
+            st.unmoved.remove(st.board[3][move.y()].ident)
         elif (move.x() == 6):
-            st.board[5][move.y()] = deepcopy(st.board[7][move.y()])
-            st.board[7][move.y()] = P.Empty()
-            st.board[5][move.y()].moved = True
+            st.board[5][move.y()] = st.board[7][move.y()]
+            st.board[7][move.y()] = EMPTY
+            st.unmoved.remove(st.board[5][move.y()].ident)
     elif (isinstance(st.board[move.x()][move.y()], P.Pawn) and ((piece.color == P.WHITE and move.y() == 7) or (piece.color == P.BLACK and move.y() == 0))):
         promotion = P.Queen(piece.ident, piece.color)
         st.board[move.x()][move.y()] = promotion
@@ -66,12 +66,13 @@ def move_piece(state, selX, selY, move):
         st.passentable = None
     
     """Determining if the pawn that just moved can suffer from en-passenting"""
-    if (isinstance(piece, P.Pawn) and (not piece.moved and abs(selY - move.y()) == 2)):
+    if (isinstance(piece, P.Pawn) and (st.pieceUnmoved(piece.ident) and abs(selY - move.y()) == 2)):
         st.passentable = move.space
     
     st.whiteChecked = False
     st.blackChecked = False
-    piece.moved = True
+    if (st.pieceUnmoved(piece.ident)):
+        st.unmoved.remove(piece.ident)
     set_check(st)
     
     st.turn = P.swapTurn(st.turn)
