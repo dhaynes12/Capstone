@@ -102,6 +102,7 @@ class Board():
     def copy(self):
         cpyBoard = Board(True)
         cpyBoard.board = [row[:] for row in self.board]
+        cpyBoard.unmoved = self.unmoved[:]
         cpyBoard.whiteChecked = self.whiteChecked
         cpyBoard.blackChecked = self.blackChecked
         cpyBoard.turn = self.turn
