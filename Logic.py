@@ -6,7 +6,7 @@ def select_piece(state, x, y):
     return state.board[x][y].validMoves(state, (x, y))
     
 def move_piece(state, selX, selY, move):
-    st = deepcopy(state)
+    st = state.copy()
     
     """Update total piece value if there's a capture"""
     if (isinstance(st.board[move.x()][move.y()], P.Piece)):
@@ -135,7 +135,7 @@ def is_checkmate(state, color):
    
    
 def undo(state, movesBack):
-    st = deepcopy(state)
+    st = state.copy()
     
     st.board = st.getAndRemoveLastState(movesBack)
     
