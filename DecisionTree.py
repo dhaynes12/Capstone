@@ -33,7 +33,6 @@ class Node(object):
             global maxNodeDepth
             if (depth > maxNodeDepth):
                 maxNodeDepth = depth
-            self.genNextMoves()
 
 
     def genNextMoves(self):
@@ -84,28 +83,30 @@ def ABPruning (node, alpha, beta):
     nextMove = None
     if node.depth == node.depthLim:
         return node.weight, nextMove
-    elif len(node.nextMoves) == 0:
-        if (Logic.is_checkmate(node.state, P.WHITE) or Logic.is_checkmate(node.state, P.BLACK)):
-            node.setWeight()
-            if (node.weight > 0):
-                return (1000 * (node.depthLim+1)) / (node.depth + 1), nextMove
-            return (-1000 * (node.depthLim+1)) / (node.depth + 1), nextMove
-        raise Exception("Node has no next moves despite not being in an ending state")
-    elif node.depth % 2 == 1:
-        for n in node.nextMoves:
-            tempVal, jnkState = ABPruning(n, node.alpha, node.beta)
-            if tempVal < node.beta:
-                node.beta = tempVal
-                nextMove = n
-            if node.beta <= node.alpha:
-                break
-        return node.beta, nextMove
     else:
-        for n in node.nextMoves:
-            tempVal, jnkState = ABPruning(n, node.alpha, node.beta)
-            if tempVal > node.alpha:
-                node.alpha = tempVal
-                nextMove = n
-            if node.beta <= node.alpha:
-                break
-        return node.alpha, nextMove
+        node.genNextMoves()
+        if len(node.nextMoves) == 0:
+            if (Logic.is_checkmate(node.state, P.WHITE) or Logic.is_checkmate(node.state, P.BLACK)):
+                node.setWeight()
+                if (node.weight > 0):
+                    return (1000 * (node.depthLim+1)) / (node.depth + 1), nextMove
+                return (-1000 * (node.depthLim+1)) / (node.depth + 1), nextMove
+            raise Exception("Node has no next moves despite not being in an ending state")
+        elif node.depth % 2 == 1:
+            for n in node.nextMoves:
+                tempVal, jnkState = ABPruning(n, node.alpha, node.beta)
+                if tempVal < node.beta:
+                    node.beta = tempVal
+                    nextMove = n
+                if node.beta <= node.alpha:
+                    break
+            return node.beta, nextMove
+        else:
+            for n in node.nextMoves:
+                tempVal, jnkState = ABPruning(n, node.alpha, node.beta)
+                if tempVal > node.alpha:
+                    node.alpha = tempVal
+                    nextMove = n
+                if node.beta <= node.alpha:
+                    break
+            return node.alpha, nextMove
