@@ -4,6 +4,7 @@ import Logic
 from copy import deepcopy
 import time
 import math
+import random
 
 """Global Values"""
 maxNodeDepth = 0
@@ -47,12 +48,28 @@ class Node(object):
                     if (tempState != None):
                         tempNode = Node(self.color, tempState, self.depth+1, self.depthLim, locs[i], move)
                         self.nextMoves.append(tempNode)
+        
+        random.shuffle(self.nextMoves)
+        
 
     # Generate how good a move is if node is a leaf node
     def setWeight(self):
-        self.weight = self.state.whiteTotalPieceVal - self.state.blackTotalPieceVal
+    
+        """AI's total piece value compared to opponent's total piece value"""
+        self.weight = (self.state.whiteTotalPieceVal - self.state.blackTotalPieceVal) * 10
         if (self.color == P.BLACK):
             self.weight *= -1
+        
+        """Number of moves that AI has compared to number of moves opponent has"""
+        if (self.state.turn == self.color):
+            self.weight += len(self.nextMoves)
+        else:
+            self.weight -= len(self.nextMoves)
+        
+        if ((self.color == P.WHITE and self.state.blackChecked) or (self.color == P.BLACK and self.state.whiteChecked)):
+            self.weight += 1000
+        elif ((self.color == P.WHITE and self.state.whiteChecked) or (self.color == P.BLACK and self.state.blackChecked)):
+            self.weight -= 1000
         
         #print(self.move, " -- Piece: ", self.space, " -- Weight: ", self.weight)
 
@@ -89,8 +106,8 @@ def ABPruning (node, alpha, beta):
             if (Logic.is_checkmate(node.state, P.WHITE) or Logic.is_checkmate(node.state, P.BLACK)):
                 node.setWeight()
                 if (node.weight > 0):
-                    return (1000 * (node.depthLim+1)) / (node.depth + 1), nextMove
-                return (-1000 * (node.depthLim+1)) / (node.depth + 1), nextMove
+                    return (100000 * (node.depthLim+1)) / (node.depth + 1), nextMove
+                return (-100000 * (node.depthLim+1)) / (node.depth + 1), nextMove
             raise Exception("Node has no next moves despite not being in an ending state")
         elif node.depth % 2 == 1:
             for n in node.nextMoves:
