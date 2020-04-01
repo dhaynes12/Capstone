@@ -94,7 +94,8 @@ def set_check(state):
     elif (state.turn == P.BLACK and enemyKingSpace in P.getValidMoves(P.BLACK, state)):
         state.whiteChecked = True
 
-"""Returns True if the king of the specified color cannot make any moves"""
+"""Returns True if the king of the specified color cannot get itself out of danger. Returns None if the specified
+side cannot make any moves"""
 def is_checkmate(state, color):
     kingId = 0
     enemyColor = None
@@ -107,11 +108,14 @@ def is_checkmate(state, color):
     
     king, kingSpace = P.searchForPiece(kingId, state.board)
     
+    kingCantMove = True
     checkmate = True
     opponentMoves = P.getValidMoves(enemyColor, state)
     friendMoves = P.getValidMoves(color, state, ignorePiece = king.ident)
+    
     for kingMove in king.validMoves(state, kingSpace):
         if (kingMove not in opponentMoves):
+            kingCantMove = False
             if isinstance(state.getPiece(kingMove.space), P.Piece) and ((kingMove.space not in friendMoves) and (move_piece(state, kingSpace[0], kingSpace[1], kingMove) == None)):
                 continue
             checkmate = False
@@ -124,15 +128,19 @@ def is_checkmate(state, color):
         if (len(oppPieces) > 1):
             raise Exception("Somehow multiple pieces directly endangered the King, which would only happen if the King finished its turn still in check")
         
-        if (type(oppPieces[0]) == P.Queen or type(oppPieces[0]) == P.Rook or type(oppPieces[0]) == P.Bishop):
+        if (len(oppPieces) == 0):
+            checkmate = False
+        elif (type(oppPieces[0]) == P.Queen or type(oppPieces[0]) == P.Rook or type(oppPieces[0]) == P.Bishop):
             for between in betweenSpaces(state, kingSpace, oppSpaces[0]):
                     if between in friendMoves:
                         checkmate = False
                         break
-            
-	
+    
+    if not checkmate and kingCantMove and len(friendMoves) == 0:
+        return None
+        
     return checkmate
-   
+    
    
 def undo(state, movesBack):
     st = state.copy()

@@ -103,11 +103,15 @@ def ABPruning (node, alpha, beta):
     else:
         node.genNextMoves()
         if len(node.nextMoves) == 0:
-            if (Logic.is_checkmate(node.state, P.WHITE) or Logic.is_checkmate(node.state, P.BLACK)):
+            whiteCheck = Logic.is_checkmate(node.state, P.WHITE)
+            blackCheck = Logic.is_checkmate(node.state, P.BLACK)
+            if (whiteCheck or blackCheck):
                 node.setWeight()
                 if (node.weight > 0):
                     return (100000 * (node.depthLim+1)) / (node.depth + 1), nextMove
                 return (-100000 * (node.depthLim+1)) / (node.depth + 1), nextMove
+            elif (whiteCheck == None or blackCheck == None):
+                return 0, nextMove
             raise Exception("Node has no next moves despite not being in an ending state")
         elif node.depth % 2 == 1:
             for n in node.nextMoves:

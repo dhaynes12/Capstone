@@ -374,11 +374,16 @@ def gameMain():
                 TextSurf, TextRect = textObjects("Black is in check", text)
                 TextRect.center = ((display_width/2),(display_height/8))
                 gameDisplay.blit(TextSurf, TextRect)
-        
+        elif Logic.is_checkmate(state,state.turn) == None or checkmate == None:
+            text = pygame.font.SysFont("agencyfb",25)
+            TextSurf, TextRect = textObjects("Stalemate. It's a tie.", text)
+            TextRect.center = ((display_width/2),(display_height/8))
+            gameDisplay.blit(TextSurf, TextRect)
+            checkmate = None
 
 
         # Buttons for new game or exit after checkmate
-        if checkmate == True:
+        if checkmate == True or checkmate == None:
             button("New Game",65,500,100,50,green,red,newGame)
             button("Exit",635,500,100,50,red,green,quitgame)
         
