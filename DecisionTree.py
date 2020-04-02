@@ -60,7 +60,6 @@ class Node(object):
     def setWeight(self):
     
         if (self.heuristic == BASIC):
-            print("Running basic heuristic")
             """AI's total piece value compared to opponent's total piece value"""
             self.weight = (self.state.whiteTotalPieceVal - self.state.blackTotalPieceVal) * 10
             if (self.color == P.BLACK):

@@ -385,7 +385,7 @@ def gameMain():
         gameInfoText(whitePlayer, whiteDepth, whiteHeuristic, 25, "White")
         
         #Right-side Info
-        gameInfoText(blackPlayer, blackDepth, blackHeuristic, 700, "White")
+        gameInfoText(blackPlayer, blackDepth, blackHeuristic, 700, "Black")
         
         # Add double for loop to make array of buttons
         for x in range(0, 8):
