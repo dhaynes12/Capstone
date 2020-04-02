@@ -82,6 +82,14 @@ WHT_KING_POS_VAL_END = [[-.50,-.40,-.30,-.20,-.20,-.30,-.40,-.50],
                         [-.30,-.30,   0,   0,   0,   0,-.30,-.30],
                         [-.50,-.30,-.30,-.30,-.30,-.30,-.30,-.50]]
 
+"""Used to swap matrix verticaly"""
+def vertSwap(matrix):
+    newMatrix = []
+    for i in range(7,-1,-1):
+        temp = matrix[i]
+        newMatrix.append(temp[:])
+    return newMatrix
+
 #For Black Pieces
 BLK_PAWN_POS_VAL = vertSwap(WHT_PAWN_POS_VAL)
 BLK_KNIGHT_POS_VAL = vertSwap(WHT_KNIGHT_POS_VAL)
@@ -91,13 +99,6 @@ BLK_QUEEN_POS_VAL = vertSwap(WHT_QUEEN_POS_VAL)
 BLK_KING_POS_VAL_MID = vertSwap(WHT_KING_POS_VAL_MID)
 BLK_KING_POS_VAL_END = vertSwap(WHT_KING_POS_VAL_END)
 
-"""Used to swap matrix verticaly"""
-def vertSwap(matrix):
-    newMatrix = []
-    for i in range(7,-1,-1):
-        temp = matrix[i]
-        newMatrix.append(temp[:])
-    return newMatrix
 
 def swapTurn(color):
     if (color == WHITE):
