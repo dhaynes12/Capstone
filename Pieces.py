@@ -18,8 +18,8 @@ QUEEN_VAL = 9
 KING_VAL = 0
 
 """Positional Piece Values"""
-# For White Pieces
-WHT_PAWN_POS_VAL = [[  0,   0,   0,   0,   0,   0,   0,   0],
+# For Black Pieces
+BLK_PAWN_POS_VAL = [[  0,   0,   0,   0,   0,   0,   0,   0],
                     [ .5,  .5,  .5,  .5,  .5,  .5,  .5,  .5],
                     [ .1,  .1,  .2,  .3,  .3,  .2,  .1,  .1],
                     [.05, .05, 0.1, .25, .25, 0.1, .05, .05],
@@ -28,7 +28,7 @@ WHT_PAWN_POS_VAL = [[  0,   0,   0,   0,   0,   0,   0,   0],
                     [.05,  .1,  .1, -.2, -.2,  .1,  .1, .05],
                     [  0,   0,   0,   0,   0,   0,   0,   0]]
 
-WHT_KNIGHT_POS_VAL = [[-.50,-.40,-.30,-.30,-.30,-.30,-.40,-.50],
+BLK_KNIGHT_POS_VAL = [[-.50,-.40,-.30,-.30,-.30,-.30,-.40,-.50],
                       [-.40,-.20,  .0,  .0,  .0,  .0,-.20,-.40],
                       [-.30,  .0, .10, .15, .15, .10,  .0,-.30],
                       [-.30, .05, .15, .20, .20, .15, .05,-.30],
@@ -37,7 +37,7 @@ WHT_KNIGHT_POS_VAL = [[-.50,-.40,-.30,-.30,-.30,-.30,-.40,-.50],
                       [-.40,-.20,  .0, .05, .05,  .0,-.20,-.40],
                       [-.50,-.40,-.30,-.30,-.30,-.30,-.40,-.50]]
 
-WHT_BISHOP_POS_VAL = [[-.20,-.10,-.10,-.10,-.10,-.10,-.10,-.20],
+BLK_BISHOP_POS_VAL = [[-.20,-.10,-.10,-.10,-.10,-.10,-.10,-.20],
                       [-.10,   0,   0,   0,   0,   0,   0,-.10],
                       [-.10,   0, .05, .10, .10, .05,   0,-.10],
                       [-.10, .05, .05, .10, .10, .05, .05,-.10],
@@ -46,7 +46,7 @@ WHT_BISHOP_POS_VAL = [[-.20,-.10,-.10,-.10,-.10,-.10,-.10,-.20],
                       [-.10, .05,   0,   0,   0,   0, .05,-.10],
                       [-.20,-.10,-.10,-.10,-.10,-.10,-.10,-.20]]
 
-WHT_ROOK_POS_VAL = [[   0,   0,   0,   0,   0,   0,   0,   0],
+BLK_ROOK_POS_VAL = [[   0,   0,   0,   0,   0,   0,   0,   0],
                     [ .05, .10, .10, .10, .10, .10, .10, .05],
                     [-.05,   0,   0,   0,   0,   0,   0,-.05],
                     [-.05,   0,   0,   0,   0,   0,   0,-.05],
@@ -55,7 +55,7 @@ WHT_ROOK_POS_VAL = [[   0,   0,   0,   0,   0,   0,   0,   0],
                     [-.05,   0,   0,   0,   0,   0,   0,-.05],
                     [   0,   0,   0, .05, .05,   0,   0,   0]]
 
-WHT_QUEEN_POS_VAL = [[-.20,-.10,-.10,-.05,-.05,-.10,-.10,-.20],
+BLK_QUEEN_POS_VAL = [[-.20,-.10,-.10,-.05,-.05,-.10,-.10,-.20],
                      [-.10,   0,   0,   0,   0,   0,   0,-.10],
                      [-.10,   0, .05, .05, .05, .05,   0,-.10],
                      [-.05,   0, .05, .05, .05, .05,   0,-.05],
@@ -64,7 +64,7 @@ WHT_QUEEN_POS_VAL = [[-.20,-.10,-.10,-.05,-.05,-.10,-.10,-.20],
                      [-.10,   0, .05,   0,   0,   0,   0,-.10],
                      [-.20,-.10,-.10,-.05,-.05,-.10,-.10,-.20]]
 
-WHT_KING_POS_VAL_MID = [[-.30,-.40,-.40,-.50,-.50,-.40,-.40,-.30],
+BLK_KING_POS_VAL_MID = [[-.30,-.40,-.40,-.50,-.50,-.40,-.40,-.30],
                         [-.30,-.40,-.40,-.50,-.50,-.40,-.40,-.30],
                         [-.30,-.40,-.40,-.50,-.50,-.40,-.40,-.30],
                         [-.30,-.40,-.40,-.50,-.50,-.40,-.40,-.30],
@@ -73,7 +73,7 @@ WHT_KING_POS_VAL_MID = [[-.30,-.40,-.40,-.50,-.50,-.40,-.40,-.30],
                         [ .20, .20,   0,   0,   0,   0, .20, .20],
                         [ .20, .30, .10,   0,   0, .10, .30, .20]]
 
-WHT_KING_POS_VAL_END = [[-.50,-.40,-.30,-.20,-.20,-.30,-.40,-.50],
+BLK_KING_POS_VAL_END = [[-.50,-.40,-.30,-.20,-.20,-.30,-.40,-.50],
                         [-.30,-.20,-.10,   0,   0,-.10,-.20,-.30],
                         [-.30,-.10, .20, .30, .30, .20,-.10,-.30],
                         [-.30,-.10, .30, .40, .40, .30,-.10,-.30],
@@ -90,14 +90,14 @@ def vertSwap(matrix):
         newMatrix.append(temp[:])
     return newMatrix
 
-#For Black Pieces
-BLK_PAWN_POS_VAL = vertSwap(WHT_PAWN_POS_VAL)
-BLK_KNIGHT_POS_VAL = vertSwap(WHT_KNIGHT_POS_VAL)
-BLK_BISHOP_POS_VAL = vertSwap(WHT_BISHOP_POS_VAL)
-BLK_ROOK_POS_VAL = vertSwap(WHT_ROOK_POS_VAL)
-BLK_QUEEN_POS_VAL = vertSwap(WHT_QUEEN_POS_VAL)
-BLK_KING_POS_VAL_MID = vertSwap(WHT_KING_POS_VAL_MID)
-BLK_KING_POS_VAL_END = vertSwap(WHT_KING_POS_VAL_END)
+#For White Pieces
+WHT_PAWN_POS_VAL = vertSwap(BLK_PAWN_POS_VAL)
+WHT_KNIGHT_POS_VAL = vertSwap(BLK_KNIGHT_POS_VAL)
+WHT_BISHOP_POS_VAL = vertSwap(BLK_BISHOP_POS_VAL)
+WHT_ROOK_POS_VAL = vertSwap(BLK_ROOK_POS_VAL)
+WHT_QUEEN_POS_VAL = vertSwap(BLK_QUEEN_POS_VAL)
+WHT_KING_POS_VAL_MID = vertSwap(BLK_KING_POS_VAL_MID)
+WHT_KING_POS_VAL_END = vertSwap(BLK_KING_POS_VAL_END)
 
 
 def swapTurn(color):

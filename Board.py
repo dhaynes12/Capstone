@@ -67,31 +67,31 @@ class Board():
             if pieces[i].color == P.WHITE:
                 self.whiteTotalPieceVal += pieces[i].value
                 if pieces[i].value == P.PAWN_VAL:
-                    self.whiteTotalPieceVal += P.WHT_PAWN_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.whiteTotalPieceVal += P.WHT_PAWN_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.ROOK_VAL:
-                    self.whiteTotalPieceVal += P.WHT_ROOK_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.whiteTotalPieceVal += P.WHT_ROOK_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.KNIGHT_VAL:
-                    self.whiteTotalPieceVal += P.WHT_KNIGHT_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.whiteTotalPieceVal += P.WHT_KNIGHT_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.BISHOP_VAL:
-                    self.whiteTotalPieceVal += P.WHT_BISHOP_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.whiteTotalPieceVal += P.WHT_BISHOP_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.QUEEN_VAL:
-                    self.whiteTotalPieceVal += P.WHT_QUEEN_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.whiteTotalPieceVal += P.WHT_QUEEN_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.KING_VAL:
-                    self.whiteTotalPieceVal += P.WHT_KING_POS_VAL_MID[loc[i][0]][loc[i][1]]
+                    self.whiteTotalPieceVal += P.WHT_KING_POS_VAL_MID[loc[i][1]][loc[i][0]]
             elif pieces[i].color == P.BLACK:
                 self.blackTotalPieceVal += pieces[i].value
                 if pieces[i].value == P.PAWN_VAL:
-                    self.blackTotalPieceVal += P.BLK_PAWN_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.blackTotalPieceVal += P.BLK_PAWN_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.ROOK_VAL:
-                    self.blackTotalPieceVal += P.BLK_ROOK_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.blackTotalPieceVal += P.BLK_ROOK_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.KNIGHT_VAL:
-                    self.blackTotalPieceVal += P.BLK_KNIGHT_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.blackTotalPieceVal += P.BLK_KNIGHT_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.BISHOP_VAL:
-                    self.blackTotalPieceVal += P.BLK_BISHOP_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.blackTotalPieceVal += P.BLK_BISHOP_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.QUEEN_VAL:
-                    self.blackTotalPieceVal += P.BLK_QUEEN_POS_VAL[loc[i][0]][loc[i][1]]
+                    self.blackTotalPieceVal += P.BLK_QUEEN_POS_VAL[loc[i][1]][loc[i][0]]
                 elif pieces[i].value == P.KING_VAL:
-                    self.blackTotalPieceVal += P.BLK_KING_POS_VAL_MID[loc[i][0]][loc[i][1]]
+                    self.blackTotalPieceVal += P.BLK_KING_POS_VAL_MID[loc[i][1]][loc[i][0]]
     
     #def getAndRemoveLastState(self, num):
     #    rem = self.prevBoards[len(self.prevBoards) - num]
