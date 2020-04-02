@@ -20,6 +20,7 @@ pygame.init() # Wont need later because main should have
 selectMoves = []
 selectedSpace = None
 state = Board()
+print(state.blackTotalPieceVal, state.whiteTotalPieceVal) # REMOVE THIS AFTER PUSH!
 
 # Display dimention -- Will need to change to match screen
 display_width = 800
