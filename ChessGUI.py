@@ -44,10 +44,17 @@ whitePlayer = None
 blackPlayer = None
 whiteDepth = 1
 blackDepth = 1
+whiteHeuristic = 0
+blackHeuristic = 0
 
 # Constants
 HUMAN = 0
 AI = 1
+HEURISTIC_LIST = [
+                    "HEURISTICS",
+                    "0 - Basic. Considers total piece value and maximizing possible moves",
+                    "Other - Moves randomly selected."
+                 ]
 
 # Initilizing the display and setting the title of window
 gameDisplay = pygame.display.set_mode((display_width,display_height))
@@ -199,13 +206,22 @@ def startGame(args):
 def gameIntro():
     global whiteDepth
     global blackDepth
+    global whiteHeuristic
+    global blackHeuristic
     
     intro = True
     
     # Input textbox initializations
-    inputBox1 = InputBox(200, 425, 50, 50, black, red, text=str(whiteDepth), ident=P.WHITE)
-    inputBox2 = InputBox(550, 425, 50, 50, black, red, text=str(blackDepth), ident=P.BLACK)
-    inputBoxes = [inputBox1, inputBox2]
+    whiteDepthID = 0
+    blackDepthID = 1
+    whiteHeurID = 2
+    blackHeurID = 3
+    
+    inputBox1 = InputBox(200, 425, 50, 50, black, red, text=str(whiteDepth), ident=whiteDepthID)
+    inputBox2 = InputBox(550, 425, 50, 50, black, red, text=str(blackDepth), ident=blackDepthID)
+    inputBox3 = InputBox(275, 425, 50, 50, black, red, text=str(whiteHeuristic), ident=whiteHeurID)
+    inputBox4 = InputBox(475, 425, 50, 50, black, red, text=str(blackHeuristic), ident=blackHeurID)
+    inputBoxes = [inputBox1, inputBox2, inputBox3, inputBox4]
 
     while intro:
         for event in pygame.event.get():
@@ -216,10 +232,14 @@ def gameIntro():
                 box.handle_event(event)
         for box in inputBoxes:
             box.update()
-            if (box.ident == P.WHITE):
+            if (box.ident == whiteDepthID):
                 whiteDepth = int(box)
-            elif (box.ident == P.BLACK):
+            elif (box.ident == blackDepthID):
                 blackDepth = int(box)
+            elif (box.ident == whiteHeurID):
+                whiteHeuristic = int(box)
+            elif (box.ident == blackHeurID):
+                blackHeuristic = int(box)
         gameDisplay.fill(white)
         largeText = pygame.font.SysFont("agencyfb",115)
         TextSurf, TextRect = textObjects("Chess AI", largeText)
@@ -235,6 +255,11 @@ def gameIntro():
         text = pygame.font.SysFont("agencyfb",16)
         TextSurf, TextRect = textObjects("Look Ahead", text)
         TextRect.center = (225,400)
+        gameDisplay.blit(TextSurf, TextRect)
+        
+        text = pygame.font.SysFont("agencyfb",16)
+        TextSurf, TextRect = textObjects("Heuristic", text)
+        TextRect.center = (300,400)
         gameDisplay.blit(TextSurf, TextRect)
 
         # Left side buttons - white
@@ -268,6 +293,11 @@ def gameIntro():
         TextRect.center = (575,400)
         gameDisplay.blit(TextSurf, TextRect)
 
+        text = pygame.font.SysFont("agencyfb",16)
+        TextSurf, TextRect = textObjects("Heuristic", text)
+        TextRect.center = (500,400)
+        gameDisplay.blit(TextSurf, TextRect)
+
         # Right side buttons - Black
         button("Human",635,350,100,50,green,red,blackHuman)
         button("AI",635,425,100,50,green,red,blackAI)
@@ -288,6 +318,13 @@ def gameIntro():
         for box in inputBoxes:
             box.draw(gameDisplay)
 
+        # Lower Left Heuristic List
+        text = pygame.font.SysFont("agencyfb",16)
+        for i in range(0, len(HEURISTIC_LIST)):
+            TextSurf, TextRect = textObjects(HEURISTIC_LIST[i], text)
+            TextRect.topleft = (25, 500 + (i * 16))
+            gameDisplay.blit(TextSurf, TextRect)
+
         pygame.display.update()
         clock.tick(15)
 
@@ -298,6 +335,30 @@ def getCords(args):
     for x in args:
         print(args)
 
+def gameInfoText(player, depth, heuristic, xPos, color):
+    text = pygame.font.SysFont("agencyfb",22)
+    
+    TextSurf, TextRect = textObjects("Player: " + color, text)
+    TextRect.topleft = (xPos,475)
+    gameDisplay.blit(TextSurf, TextRect)
+    
+    if (player == HUMAN):
+        TextSurf, TextRect = textObjects("Type: Human", text)
+        TextRect.topleft = (xPos,500)
+        gameDisplay.blit(TextSurf, TextRect)
+    else:
+        TextSurf, TextRect = textObjects("Player: AI", text)
+        TextRect.topleft = (xPos,500)
+        gameDisplay.blit(TextSurf, TextRect)
+        
+        TextSurf, TextRect = textObjects("Lookahead: " + str(depth), text)
+        TextRect.topleft = (xPos,525)
+        gameDisplay.blit(TextSurf, TextRect)
+        
+        TextSurf, TextRect = textObjects("Heuristic: " + str(heuristic), text)
+        TextRect.topleft = (xPos,550)
+        gameDisplay.blit(TextSurf, TextRect)
+
 def gameMain():
     global state
     global selectMoves
@@ -305,6 +366,8 @@ def gameMain():
     global blackPlayer
     global whiteDepth
     global blackDepth
+    global whiteHeuristic
+    global blackHeuristic
     gameExit = False
     checkmate = False
  
@@ -316,6 +379,13 @@ def gameMain():
                 quit()
 
         gameDisplay.fill(white)
+        
+        #Left-side Info
+        gameInfoText(whitePlayer, whiteDepth, whiteHeuristic, 25, "White")
+        
+        #Right-side Info
+        gameInfoText(blackPlayer, blackDepth, blackHeuristic, 700, "White")
+        
         # Add double for loop to make array of buttons
         for x in range(0, 8):
             for y in range(0, 8):
@@ -384,8 +454,8 @@ def gameMain():
 
         # Buttons for new game or exit after checkmate
         if checkmate == True or checkmate == None:
-            button("New Game",65,500,100,50,green,red,newGame)
-            button("Exit",635,500,100,50,red,green,quitgame)
+            button("New Game",165,500,100,50,green,red,newGame)
+            button("Exit",535,500,100,50,red,green,quitgame)
         
 
         pygame.display.update()
@@ -394,12 +464,15 @@ def gameMain():
             # AI Control
             
             depthLim = 0
+            heuristic = 0
             if state.turn == P.WHITE:
                 depthLim = whiteDepth
+                heuristic = whiteHeuristic
             elif state.turn == P.BLACK:
                 depthLim = blackDepth
-                     
-            node = aiSearch(state, depthLim)
+                heuristic = blackHeuristic
+            
+            node = aiSearch(state, depthLim, heuristic)
             
             selectSpace(node.space)
             makeMove(node.move.space)
