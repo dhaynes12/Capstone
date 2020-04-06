@@ -71,10 +71,10 @@ class Node(object):
             else:
                 self.weight -= len(self.nextMoves)
             
-            if ((self.color == P.WHITE and self.state.blackChecked) or (self.color == P.BLACK and self.state.whiteChecked)):
-                self.weight += 1000
-            elif ((self.color == P.WHITE and self.state.whiteChecked) or (self.color == P.BLACK and self.state.blackChecked)):
-                self.weight -= 1000
+            #if ((self.color == P.WHITE and self.state.blackChecked) or (self.color == P.BLACK and self.state.whiteChecked)):
+            #    self.weight += 1000
+            #elif ((self.color == P.WHITE and self.state.whiteChecked) or (self.color == P.BLACK and self.state.blackChecked)):
+            #    self.weight -= 1000
             
             #print(self.move, " -- Piece: ", self.space, " -- Weight: ", self.weight)
 
