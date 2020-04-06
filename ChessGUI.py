@@ -11,7 +11,7 @@ import os
 import Logic
 import Pieces as P
 from Board import Board
-from DecisionTree import ABPruning, Node, aiSearch
+from DecisionTree import ABPruning, Node, aiSearch, AI_Exception
 from copy import deepcopy
  
 pygame.init() # Wont need later because main should have
@@ -348,7 +348,7 @@ def gameInfoText(player, depth, heuristic, xPos, color):
         TextRect.topleft = (xPos,500)
         gameDisplay.blit(TextSurf, TextRect)
     else:
-        TextSurf, TextRect = textObjects("Player: AI", text)
+        TextSurf, TextRect = textObjects("Type: AI", text)
         TextRect.topleft = (xPos,500)
         gameDisplay.blit(TextSurf, TextRect)
         
@@ -371,6 +371,8 @@ def gameMain():
     global blackHeuristic
     gameExit = False
     checkmate = False
+    crash = False
+    crashedColor = ""
  
     while not gameExit:
  
@@ -421,7 +423,12 @@ def gameMain():
                     chessPiece((x * 45 + 220),(435 - y * 45),img)
 
         # Printing text to indicate check or checkmate
-        if state.whiteChecked:
+        if crash:
+            text = pygame.font.SysFont("agencyfb",25)
+            TextSurf, TextRect = textObjects("Oops, the " + crashedColor + " AI thought of this state, causing a crash.", text)
+            TextRect.center = ((display_width/2),(display_height/8))
+            gameDisplay.blit(TextSurf, TextRect)
+        elif state.whiteChecked:
             if Logic.is_checkmate(state,state.turn) == True or checkmate == True:
                 text = pygame.font.SysFont("agencyfb",25)
                 TextSurf, TextRect = textObjects("Checkmate! Black Wins!", text)
@@ -454,14 +461,14 @@ def gameMain():
 
 
         # Buttons for new game or exit after checkmate
-        if checkmate == True or checkmate == None:
+        if checkmate == True or checkmate == None or crash:
             button("New Game",165,500,100,50,green,red,newGame)
             button("Exit",535,500,100,50,red,green,quitgame)
         
 
         pygame.display.update()
         clock.tick(15)
-        if ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and checkmate != True:
+        if not crash and ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and checkmate != True:
             # AI Control
             
             depthLim = 0
@@ -473,7 +480,13 @@ def gameMain():
                 depthLim = blackDepth
                 heuristic = blackHeuristic
             
-            node = aiSearch(state, depthLim, heuristic)
-            
-            selectSpace(node.space)
-            makeMove(node.move.space)
+            try:
+                node = aiSearch(state, depthLim, heuristic)
+                
+                selectSpace(node.space)
+                makeMove(node.move.space)
+            except AI_Exception as a:
+                crash = True
+                state = a.state
+                crashedColor = a.aiColor
+                print(a)

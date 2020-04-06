@@ -13,6 +13,15 @@ totalNodes = 0
 """Heuristic Types"""
 BASIC = 0
 
+class AI_Exception(Exception):
+    def __init__(self, state, mess, aiColor):
+        self.state = state
+        self.mess = mess
+        self.aiColor = aiColor
+    
+    def __str__(self):
+        return mess + "\nAI: " + P.colorToStr(aiColor)
+
 class Node(object):
     
     def __init__(self, color, state, depth, depthLim, heuristic, space = (0,0), move = P.Move((-1, -1))):
@@ -84,7 +93,7 @@ def aiSearch(state, depthLim, heuristic):
     
     startTime = time.perf_counter()
     
-    tempNode = Node(state.turn, deepcopy(state), 0, depthLim, heuristic)   
+    tempNode = Node(state.turn, state, 0, depthLim, heuristic)   
     value, node = ABPruning(tempNode, -math.inf, math.inf)
     
     endTime = time.perf_counter()
@@ -108,16 +117,7 @@ def ABPruning (node, alpha, beta):
     else:
         node.genNextMoves()
         if len(node.nextMoves) == 0:
-            whiteCheckmate = Logic.is_checkmate(node.state, P.WHITE)
-            blackCheckmate = Logic.is_checkmate(node.state, P.BLACK)
-            if (whiteCheckmate or blackCheckmate):
-                node.setWeight()
-                if ((whiteCheckmate and node.color == P.BLACK) or (blackCheckmate and node.color == P.WHITE)):
-                    return (100000 * (node.depthLim+1)) / (node.depth + 1), nextMove
-                return (-100000 * (node.depthLim+1)) / (node.depth + 1), nextMove
-            elif (whiteCheckmate == None or blackCheckmate == None):
-                return 0, nextMove
-            raise Exception("Node has no next moves despite not being in an ending state")
+            return endStateCheck(node, nextMove)
         elif node.depth % 2 == 1:
             for n in node.nextMoves:
                 tempVal, jnkState = ABPruning(n, node.alpha, node.beta)
@@ -136,3 +136,15 @@ def ABPruning (node, alpha, beta):
                 if node.beta <= node.alpha:
                     break
             return node.alpha, nextMove
+ 
+def endStateCheck(node, nextMove):
+    whiteCheckmate = Logic.is_checkmate(node.state, P.WHITE)
+    blackCheckmate = Logic.is_checkmate(node.state, P.BLACK)
+    if (whiteCheckmate or blackCheckmate):
+        node.setWeight()
+        if ((whiteCheckmate and node.color == P.BLACK) or (blackCheckmate and node.color == P.WHITE)):
+            return (100000 * (node.depthLim+1)) / (node.depth + 1), nextMove
+        return (-100000 * (node.depthLim+1)) / (node.depth + 1), nextMove
+    elif (whiteCheckmate == None or blackCheckmate == None):
+        return 0, nextMove
+    raise AI_Exception(node.state, "Node has no next moves despite not being in an ending state", node.color)
