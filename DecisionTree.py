@@ -20,7 +20,7 @@ class AI_Exception(Exception):
         self.aiColor = aiColor
     
     def __str__(self):
-        return mess + "\nAI: " + P.colorToStr(aiColor)
+        return self.mess + "\nAI: " + P.colorToStr(self.aiColor)
 
 class Node(object):
     

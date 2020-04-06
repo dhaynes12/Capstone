@@ -488,5 +488,5 @@ def gameMain():
             except AI_Exception as a:
                 crash = True
                 state = a.state
-                crashedColor = a.aiColor
+                crashedColor = P.colorToStr(a.aiColor)
                 print(a)
