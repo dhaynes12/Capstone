@@ -20,7 +20,7 @@ class AI_Exception(Exception):
         self.aiColor = aiColor
     
     def __str__(self):
-        return self.mess + "\nAI: " + P.colorToStr(self.aiColor)
+        return self.mess + "\nAI: " + P.colorToStr(self.aiColor) + "\nTurn during state: " + P.colorToStr(self.state.turn)
 
 class Node(object):
     
@@ -98,6 +98,7 @@ def aiSearch(state, depthLim, heuristic):
     
     endTime = time.perf_counter()
     
+    print("Turn:", state.turn)
     print("Calculation Time:", endTime - startTime, "seconds")
     print("Max Node Depth:", maxNodeDepth)
     print("Total Nodes:", totalNodes)
