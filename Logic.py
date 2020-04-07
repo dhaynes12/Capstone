@@ -115,12 +115,26 @@ def is_checkmate(state, color):
     
     for kingMove in king.validMoves(state, kingSpace):
         if (kingMove not in opponentMoves):
-            kingCantMove = False
             pieceAtSpace = state.getPiece(kingMove.space)
-            if isinstance(pieceAtSpace, P.Piece) and ((kingMove.space not in friendMoves) and (move_piece(state, kingSpace[0], kingSpace[1], kingMove) == None)):
-                continue
-            elif isinstance(pieceAtSpace, P.Empty) and move_piece(state, kingSpace[0], kingSpace[1], kingMove) == None:
-                continue
+            if isinstance(pieceAtSpace, P.Empty):
+                if move_piece(state, kingSpace[0], kingSpace[1], kingMove) == None:
+                    continue
+                kingCantMove = False
+            
+            if isinstance(pieceAtSpace, P.Piece) and (move_piece(state, kingSpace[0], kingSpace[1], kingMove) == None):
+                noProtect = False
+                if (kingMove in friendMoves):
+                    for move in friendMoves:
+                        if (move == kingMove.space and move_piece(state, move.originX(), move.originY(), move) == None):
+                            noProtect = True
+                            break
+                else:
+                    noProtect = True
+                    
+                if (noProtect):
+                    continue
+                    
+            kingCantMove = False
             checkmate = False
             break
     
