@@ -116,7 +116,10 @@ def is_checkmate(state, color):
     for kingMove in king.validMoves(state, kingSpace):
         if (kingMove not in opponentMoves):
             kingCantMove = False
-            if isinstance(state.getPiece(kingMove.space), P.Piece) and ((kingMove.space not in friendMoves) and (move_piece(state, kingSpace[0], kingSpace[1], kingMove) == None)):
+            pieceAtSpace = state.getPiece(kingMove.space)
+            if isinstance(pieceAtSpace, P.Piece) and ((kingMove.space not in friendMoves) and (move_piece(state, kingSpace[0], kingSpace[1], kingMove) == None)):
+                continue
+            elif isinstance(pieceAtSpace, P.Empty) and move_piece(state, kingSpace[0], kingSpace[1], kingMove) == None:
                 continue
             checkmate = False
             break
@@ -185,15 +188,32 @@ def betweenSpaces(state, space1, space2):
     
     """Diagonal Look"""
     if space1[0] != space2[0] and space1[1] != space2[1]:
-        loops = 1
-        for x in range(minX+1, maxX+1):
-            spaces.append((x, minY+loops))
-            loops += 1
+    
+        leftmostSpace = None
+        rightmostSpace = None
+        if (space1[0] == maxX):
+            leftmostSpace = space2
+            rightmostSpace = space1
+        else:
+            leftmostSpace = space1
+            rightmostSpace = space2
+        loops = 0
+        loopChange = 0
+        if (leftmostSpace[1] > rightmostSpace[1]):
+            loops = -1
+            loopChange = -1
+        else:
+            loops = 1
+            loopChange = 1
+            
+        for x in range(leftmostSpace[0]+1, rightmostSpace[0]):
+            spaces.append((x, leftmostSpace[1]+loops))
+            loops += loopChange
     elif space1[0] == space2[0] and space1[1] != space2[1]:
-        for y in range(minY+1, maxY+1):
+        for y in range(minY+1, maxY):
             spaces.append((minX, y))
     elif space1[0] != space2[0] and space1[1] == space2[1]:
-        for x in range(minX+1, maxX+1):
+        for x in range(minX+1, maxX):
             spaces.append((x, minY))
     
     return spaces
