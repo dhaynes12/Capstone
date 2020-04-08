@@ -41,7 +41,7 @@ class Node(object):
         self.move = move            # The coordinates that the piece is being moved to
 
         # if depth is at limit call weight function
-        if depth == depthLim:
+        if depth >= depthLim:
             self.setWeight()
         else:       # else generate list of next possible moves
             global maxNodeDepth
@@ -87,6 +87,15 @@ class Node(object):
             
             #print(self.move, " -- Piece: ", self.space, " -- Weight: ", self.weight)
 
+    # A quick and dirty copy function
+    def copy(self):
+        newNode = Node(self.color, self.state.copy(), self.depth, self.depthLim, self.heuristic, self.space, self.move)
+        newNode.alpha = self.alpha
+        newNode.beta = self.beta            
+        newNode.nextMoves = self.nextMoves[:] 
+        newNode.weight = self.weight
+        return newNode
+
 def aiSearch(state, depthLim, heuristic):
     global maxNodeDepth
     global totalNodes
@@ -109,12 +118,35 @@ def aiSearch(state, depthLim, heuristic):
     
     return node
 
-def ABPruning (node, alpha, beta):
+# nullMV is a variable to prevent nullmoves from chaining
+def ABPruning (node, alpha, beta, nullMV = True):
     node.alpha = alpha
     node.beta = beta
     nextMove = None
+
+    
+
     if node.depth == node.depthLim:
         return node.weight, nextMove
+    # Checking in null move is possible (No check, can't chain, needs not to be the 0 move, no zugzwang)
+    # STILL NEED TO CHECK FOR ZUGZWANG (AT least one piece with a value greater than a pawn)
+    elif (nullMV and node.depth <= node.depthLim - 2 and node.depth != 0):
+        # check here for current side in check
+        if (node.state.turn == P.WHITE and node.color == P.WHITE and node.state.whiteChecked is False) or (
+            node.state.turn == P.BLACK and node.color == P.BLACK and node.state.blackChecked is False):
+                
+                # Copying the node and make a null move plus lower the depthLimit by R (2)
+                copyNode = node.copy()
+                copyNode.depthLim = node.depthLim - 2
+                copyNode.state.turn = P.swapTurn(copyNode.state.turn)
+                copyNode.depth += 1
+                if (beta == math.inf):
+                    someNum = -ABPruning(node, -20000, -19999, False)
+                else:
+                    someNum = -ABPruning(node, -beta, -beta+1, False)
+                # if someNum is >= beta the return beta
+                if
+    # Might have to move outside of the else statment (Maybe not)
     else:
         node.genNextMoves()
         if len(node.nextMoves) == 0:
