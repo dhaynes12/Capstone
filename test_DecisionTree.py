@@ -66,7 +66,17 @@ crash3.board[4][7] = P.King(crash3.blackKingId, P.BLACK)
 crash3.board[5][3] = P.Queen(102, P.WHITE)
 crash3.turn = P.WHITE
 crash3.whiteChecked = True
-crash2.unmoved = []
+crash3.unmoved = []
+
+crash4 = B.Board(True)
+crash4.board[2][7] = P.Rook(100, P.WHITE)
+crash4.board[6][4] = P.King(crash4.whiteKingId, P.WHITE)
+crash4.board[6][5] = P.Queen(101, P.WHITE)
+crash4.board[6][6] = P.Bishop(102, P.BLACK)
+crash4.board[6][7] = P.King(crash4.blackKingId, P.BLACK)
+crash4.turn = P.BLACK
+crash4.blackChecked = True
+crash4.unmoved = []
 
 @pytest.mark.parametrize(
     "state,depthLim,heuristic",
@@ -81,6 +91,7 @@ def test_move_return(state, depthLim,heuristic):
 @pytest.mark.parametrize(
     "state,aicolor,depthLim,heuristic",
     [
+        (crash4, P.BLACK, 3, 0),
         (crash3, P.WHITE, 3, 0),
         (crash2, P.BLACK, 3, 0),
         (crash, P.BLACK, 3, 0),

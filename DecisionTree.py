@@ -107,7 +107,7 @@ def aiSearch(state, depthLim, heuristic):
     maxNodeDepth = 0
     totalNodes = 0
     
-    return node
+    return node, endTime - startTime
 
 def ABPruning (node, alpha, beta):
     node.alpha = alpha

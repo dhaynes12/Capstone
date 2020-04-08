@@ -150,8 +150,10 @@ def is_checkmate(state, color):
         elif (type(oppPieces[0]) == P.Queen or type(oppPieces[0]) == P.Rook or type(oppPieces[0]) == P.Bishop):
             for between in betweenSpaces(state, kingSpace, oppSpaces[0]):
                     if between in friendMoves:
-                        checkmate = False
-                        break
+                        move = friendMoves[friendMoves.index(between)]
+                        if move_piece(state, move.originX(), move.originY(), move) != None:
+                            checkmate = False
+                            break
     
     if not checkmate and kingCantMove and len(friendMoves) == 0:
         return None

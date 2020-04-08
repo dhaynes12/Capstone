@@ -13,6 +13,7 @@ import Pieces as P
 from Board import Board
 from DecisionTree import ABPruning, Node, aiSearch, AI_Exception
 from copy import deepcopy
+import statistics
  
 pygame.init() # Wont need later because main should have
 
@@ -20,7 +21,6 @@ pygame.init() # Wont need later because main should have
 selectMoves = []
 selectedSpace = None
 state = Board()
-print(state.blackTotalPieceVal, state.whiteTotalPieceVal) # REMOVE THIS AFTER PUSH!
 
 # Display dimention -- Will need to change to match screen
 display_width = 800
@@ -47,6 +47,10 @@ whiteDepth = 1
 blackDepth = 1
 whiteHeuristic = 0
 blackHeuristic = 0
+startTime = 0
+whiteAITimes = []
+blackAITimes = []
+turns = 0
 
 # Constants
 HUMAN = 0
@@ -164,6 +168,7 @@ def makeMove(moveCoords):
     global state
     global selectMoves
     global selectedSpace
+    global turns
     
     movement = selectMoves[selectMoves.index(moveCoords)]
     
@@ -176,6 +181,8 @@ def makeMove(moveCoords):
         state = newState
         selectedSpace = None
         selectMoves.clear()
+    
+    turns += 1
 
 # start button function
 def startGame(args):
@@ -360,6 +367,59 @@ def gameInfoText(player, depth, heuristic, xPos, color):
         TextRect.topleft = (xPos,550)
         gameDisplay.blit(TextSurf, TextRect)
 
+def printResults(checkmate, state):
+    endTime = time.perf_counter()
+    
+    print("-------------RESULTS------------")
+    print("---Game---")
+    end = ""
+    if (checkmate == None):
+        end = "Stalemate"
+    elif (state.whiteChecked and state.blackChecked):
+        end = "Somehow both sides won simultaneously. Huh."
+    elif (not state.whiteChecked and not state.blackChecked):
+        end = "Somehow neither side won without stalemating. Huh."
+    elif (state.whiteChecked):
+        end = "Black checkmated white"
+    elif (state.blackChecked):
+        end = "White checkmated black"
+    else:
+        end = "If you're seeing this, something went really wrong with the program."
+    
+    print("End State:", end)
+    print("Turns Taken:", turns)
+    print("Time Taken:", str((endTime - startTime) / 60), "minutes")
+    print()
+    
+    for side in [P.WHITE, P.BLACK]:
+        sideHuman = (side == P.WHITE and whitePlayer == HUMAN) or (side == P.BLACK and blackPlayer == HUMAN)
+        print("---" + P.colorToStr(side) + " Side---")
+        
+        pType = ""
+        if (sideHuman):
+            pType = "Human"
+        else:
+            pType = "AI"
+        print("Type:", pType)
+        
+        if not sideHuman:
+            minAITime = 0
+            maxAITime = 0
+            avgAITime = 0
+            
+            if (side == P.WHITE):
+                minAITime = min(whiteAITimes)
+                maxAITime = max(whiteAITimes)
+                avgAITime = statistics.mean(whiteAITimes)
+            else:
+                minAITime = min(blackAITimes)
+                maxAITime = max(blackAITimes)
+                avgAITime = statistics.mean(blackAITimes)
+            print("Lowest think time:", minAITime)
+            print("Highest think time:", maxAITime)
+            print("Average think time:", avgAITime)
+    
+
 def gameMain():
     global state
     global selectMoves
@@ -369,10 +429,18 @@ def gameMain():
     global blackDepth
     global whiteHeuristic
     global blackHeuristic
+    global startTime
+    global whiteAITimes
+    global blackAITimes
+    global turn
     gameExit = False
     checkmate = False
     crash = False
     crashedColor = ""
+    printedResults = False
+    startTime = time.perf_counter()
+    turns = 0
+ 
  
     while not gameExit:
  
@@ -464,11 +532,15 @@ def gameMain():
         if checkmate == True or checkmate == None or crash:
             button("New Game",165,500,100,50,green,red,newGame)
             button("Exit",535,500,100,50,red,green,quitgame)
+            
+            if not printedResults:
+                
+                printedResults = True
         
 
         pygame.display.update()
         clock.tick(15)
-        if not crash and ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and checkmate != True:
+        if not crash and ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and not checkmate:
             # AI Control
             
             depthLim = 0
@@ -481,7 +553,12 @@ def gameMain():
                 heuristic = blackHeuristic
             
             try:
-                node = aiSearch(state, depthLim, heuristic)
+                node, thinkTime = aiSearch(state, depthLim, heuristic)
+                
+                if (state.turn == P.WHITE):
+                    whiteAITimes.append(thinkTime)
+                else:
+                    blackAITimes.append(thinkTime)
                 
                 selectSpace(node.space)
                 makeMove(node.move.space)
