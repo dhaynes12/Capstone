@@ -12,6 +12,7 @@ totalNodes = 0
 
 """Heuristic Types"""
 BASIC = 0
+HASH = 1
 
 class AI_Exception(Exception):
     def __init__(self, state, mess, aiColor):
@@ -34,8 +35,11 @@ class Node(object):
         self.depthLim = depthLim    # depth of how far the tree can evaluate
         self.heuristic = heuristic
         self.alpha = 0              # alpha and beta are values for pruning the tree
-        self.beta = 0            
-        self.nextMoves = []         # list of next possible moves
+        self.beta = 0
+        if (self.heuristic == HASH):
+            self.nextMoves = {}
+        else:
+            self.nextMoves = []
         self.weight = 0             # How good of a move is current node
         self.space = space          # The coordinates of the piece being moved
         self.move = move            # The coordinates that the piece is being moved to
@@ -56,19 +60,26 @@ class Node(object):
             if not isinstance(pieces[i], P.Piece):
                 continue
             else:
-                for move in pieces[i].validMoves(self.state, locs[i]):
-                    tempState = Logic.move_piece(self.state, locs[i][0], locs[i][1], move)
+                moves = pieces[i].validMoves(self.state, locs[i])
+                for j in range(0, len(moves)):
+                    tempState = Logic.move_piece(self.state, locs[i][0], locs[i][1], moves[j])
                     if (tempState != None):
-                        tempNode = Node(self.color, tempState, self.depth+1, self.depthLim, self.heuristic, locs[i], move)
-                        self.nextMoves.append(tempNode)
+                        tempNode = Node(self.color, tempState, self.depth+1, self.depthLim, self.heuristic, locs[i], moves[j])
+                        if (self.heuristic == HASH):
+                            self.nextMoves[j] = tempNode
+                        else:
+                            self.nextMoves.append(tempNode)
         
-        random.shuffle(self.nextMoves)
+        if (self.heuristic == HASH):
+            pass
+        else:
+            random.shuffle(self.nextMoves)
         
 
     # Generate how good a move is if node is a leaf node
     def setWeight(self):
     
-        if (self.heuristic == BASIC):
+        if (self.heuristic == BASIC or self.heuristic == HASH):
             """AI's total piece value compared to opponent's total piece value"""
             self.weight = (self.state.whiteTotalPieceVal - self.state.blackTotalPieceVal) * 10
             if (self.color == P.BLACK):
@@ -120,20 +131,21 @@ def ABPruning (node, alpha, beta):
         if len(node.nextMoves) == 0:
             return endStateCheck(node, nextMove)
         elif node.depth % 2 == 1:
-            for n in node.nextMoves:
-                tempVal, jnkState = ABPruning(n, node.alpha, node.beta)
+            r = range(0, len(node.nextMoves))
+            for i in range(0, len(node.nextMoves)):
+                tempVal, jnkState = ABPruning(node.nextMoves[i], node.alpha, node.beta)
                 if tempVal < node.beta:
                     node.beta = tempVal
-                    nextMove = n
+                    nextMove = node.nextMoves[i]
                 if node.beta <= node.alpha:
                     break
             return node.beta, nextMove
         else:
-            for n in node.nextMoves:
-                tempVal, jnkState = ABPruning(n, node.alpha, node.beta)
+            for i in range(0, len(node.nextMoves)):
+                tempVal, jnkState = ABPruning(node.nextMoves[i], node.alpha, node.beta)
                 if tempVal > node.alpha:
                     node.alpha = tempVal
-                    nextMove = n
+                    nextMove = node.nextMoves[i]
                 if node.beta <= node.alpha:
                     break
             return node.alpha, nextMove

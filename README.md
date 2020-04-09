@@ -4,6 +4,10 @@ Capstone chess AI project
 # Goal
 Create a chess program that displays a chess board and allows for interaction through clicking the chess pieces. Human vs. human, human vs. ai, and ai vs. ai will be possible. The ai will be reasonably smart, and the user can decide how many moves the ai could look ahead.
 
+# AI Types
+0 - Heuristic takes into account difference between its and opponent's total piece values, and the difference between its and opponent's total moves. It randomly chooses nodes to search down.
+Other - Randomly decides moves
+
 # Attribution
 All chess symbols by Cburnett is licensed under [CC BY-SA3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.en). The symbols used are:
 * [Chess klt45.svg](https://en.wikipedia.org/wiki/File:Chess_klt45.svg)
