@@ -370,6 +370,7 @@ def gameInfoText(player, depth, heuristic, xPos, color):
 def printResults(checkmate, state):
     endTime = time.perf_counter()
     
+    print("\n\n\n")
     print("-------------RESULTS------------")
     print("---Game---")
     end = ""
@@ -388,7 +389,7 @@ def printResults(checkmate, state):
     
     print("End State:", end)
     print("Turns Taken:", turns)
-    print("Time Taken:", str((endTime - startTime) / 60), "minutes")
+    print("Time Taken:", "{0:.{1}f}".format(endTime - startTime, 2), "seconds")
     print()
     
     for side in [P.WHITE, P.BLACK]:
@@ -415,9 +416,12 @@ def printResults(checkmate, state):
                 minAITime = min(blackAITimes)
                 maxAITime = max(blackAITimes)
                 avgAITime = statistics.mean(blackAITimes)
-            print("Lowest think time:", minAITime)
-            print("Highest think time:", maxAITime)
-            print("Average think time:", avgAITime)
+            print("Lowest think time:", "{0:.{1}f}".format(minAITime, 2), "seconds")
+            print("Highest think time:", "{0:.{1}f}".format(maxAITime, 2), "seconds")
+            print("Average think time:", "{0:.{1}f}".format(avgAITime, 2), "seconds")
+            print()
+            
+            
     
 
 def gameMain():
@@ -534,13 +538,13 @@ def gameMain():
             button("Exit",535,500,100,50,red,green,quitgame)
             
             if not printedResults:
-                
+                printResults(checkmate, state)
                 printedResults = True
         
 
         pygame.display.update()
         clock.tick(15)
-        if not crash and ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and not checkmate:
+        if not crash and ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and checkmate != True and checkmate != None:
             # AI Control
             
             depthLim = 0

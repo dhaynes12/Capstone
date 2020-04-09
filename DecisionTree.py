@@ -98,7 +98,7 @@ def aiSearch(state, depthLim, heuristic):
     
     endTime = time.perf_counter()
     
-    print("Turn:", state.turn)
+    print("Turn:", P.colorToStr(state.turn))
     print("Calculation Time:", endTime - startTime, "seconds")
     print("Max Node Depth:", maxNodeDepth)
     print("Total Nodes:", totalNodes)
