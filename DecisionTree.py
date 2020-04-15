@@ -12,6 +12,7 @@ totalNodes = 0
 
 """Heuristic Types"""
 BASIC = 0
+NEGMAX = 3
 
 class AI_Exception(Exception):
     def __init__(self, state, mess, aiColor):
@@ -63,12 +64,11 @@ class Node(object):
                         self.nextMoves.append(tempNode)
         
         random.shuffle(self.nextMoves)
-        
 
     # Generate how good a move is if node is a leaf node
     def setWeight(self):
     
-        if (self.heuristic == BASIC):
+        if (self.heuristic == BASIC or self.heuristic == NEGMAX):
             """AI's total piece value compared to opponent's total piece value"""
             self.weight = (self.state.whiteTotalPieceVal - self.state.blackTotalPieceVal) * 10
             if (self.color == P.BLACK):
@@ -96,14 +96,26 @@ class Node(object):
         newNode.weight = self.weight
         return newNode
 
+
 def aiSearch(state, depthLim, heuristic):
     global maxNodeDepth
     global totalNodes
     
     startTime = time.perf_counter()
     
-    tempNode = Node(state.turn, state, 0, depthLim, heuristic)   
-    value, node = ABPruning(tempNode, -math.inf, math.inf)
+    tempNode = Node(state.turn, state, 0, depthLim, heuristic) 
+    bestMoveLst = [tempNode]
+    
+    # Change herusitic value to 3 later
+    if heuristic == NEGMAX:
+        for i in range(1, depthLim + 1):
+            tempNode.depthLim = i
+            value, node = ABNegPruning(tempNode, -math.inf, math.inf, bestMoveLst)
+            bestMoveLst.append(node)
+            print("Current best move:", node, "\nCurrent best score:", value, "\nTotal Nodes:", totalNodes)
+    else:
+        value, node = ABPruning(tempNode, -math.inf, math.inf)
+        print(value)
     
     endTime = time.perf_counter()
     
@@ -128,50 +140,6 @@ def ABPruning (node, alpha, beta, nullMV = True):
 
     if node.depth == node.depthLim:
         return node.weight, nextMove
-    # Checking in null move is possible (No check, can't chain, needs not to be the 0 move, no zugzwang)
-    # STILL NEED TO CHECK FOR ZUGZWANG (AT least one piece with a value greater than a pawn)
-    elif (nullMV and node.depth <= node.depthLim - 2 and node.depth != 0):
-        pieces, loc = node.state.getAllPieces()
-        for piece in pieces:
-            if (node.state.turn == P.WHITE and piece.value != P.PAWN_VAL and piece.color == P.WHITE) or (
-                node.state.turn == P.BLACK and piece.value != P.PAWN_VAL and piece.color == P.BLACK):
-                    # check here for current side in check
-                    if (node.state.turn == P.WHITE and node.color == P.WHITE and node.state.whiteChecked is False) or (
-                        node.state.turn == P.BLACK and node.color == P.BLACK and node.state.blackChecked is False):
-                
-                            # Copying the node and make a null move plus lower the depthLimit by R (2)
-                            copyNode = node.copy()
-                            copyNode.depthLim = node.depthLim - 2
-                            copyNode.state.turn = P.swapTurn(copyNode.state.turn)
-                            copyNode.depth += 1
-                            tempVal = 0
-                            if (beta == math.inf):
-                                tempVal, jnkState = ABPruning(node, -20000, -19999, False)
-                            else:
-                                tempVal, jnkState = ABPruning(node, -(beta), -(beta+1), False)
-                            # if someNum is >= beta the return beta
-                            if -tempVal >= beta:
-                                print("I just Null Pruned! on beta")
-                                return beta, jnkState
-                    elif (node.state.turn == P.WHITE and node.color == P.BLACK and node.state.whiteChecked is False) or (
-                        node.state.turn == P.BLACK and node.color == P.WHITE and node.state.blackChecked is False):
-                
-                            # Copying the node and make a null move plus lower the depthLimit by R (2)
-                            copyNode = node.copy()
-                            copyNode.depthLim = node.depthLim - 2
-                            copyNode.state.turn = P.swapTurn(copyNode.state.turn)
-                            copyNode.depth += 1
-                            tempVal = 0
-                            if (alpha == -math.inf):
-                                tempVal, jnkState = ABPruning(node, 19999, 20000, False)
-                            else:
-                                tempVal, jnkState = ABPruning(node, -(alpha-1), -alpha, False)
-                            # if someNum is >= beta the return beta
-                            if -tempVal <= alpha:
-                                print("I just Null Pruned! on alpha")
-                                return alpha, jnkState
-                    break;
-    
     node.genNextMoves()
     if len(node.nextMoves) == 0:
         return endStateCheck(node, nextMove)
@@ -205,3 +173,69 @@ def endStateCheck(node, nextMove):
     elif (whiteCheckmate == None or blackCheckmate == None):
         return 0, nextMove
     raise AI_Exception(node.state, "Node has no next moves despite not being in an ending state", node.color)
+
+
+def ABNegPruning (node, alpha, beta, bestMoveLst, nullMV = True):
+    node.alpha = alpha
+    node.beta = beta
+    nextMove = None
+
+
+    if node.depth == node.depthLim:
+        return node.weight, nextMove
+    # Checking in null move is possible (No check, can't chain, needs not to be the 0 move, no zugzwang)
+    # STILL NEED TO CHECK FOR ZUGZWANG (AT least one piece with a value greater than a pawn)
+    if (False):
+        #Change back to elif
+        if (nullMV and node.depth <= node.depthLim - 2 and node.depth != 0):
+            pieces, loc = node.state.getAllPieces()
+            for piece in pieces:
+                if (node.state.turn == P.WHITE and piece.value >= P.PAWN_VAL and piece.color == P.WHITE) or (
+                    node.state.turn == P.BLACK and piece.value >= P.PAWN_VAL and piece.color == P.BLACK):
+                        # check here for current side in check
+                        if (node.state.turn == P.WHITE and node.color == P.BLACK and node.state.whiteChecked is False) or (
+                            node.state.turn == P.BLACK and node.color == P.WHITE and node.state.blackChecked is False):
+                
+                                # Copying the node and make a null move plus lower the depthLimit by R (2)
+                                if (beta == math.inf):
+                                    break
+                                copyNode = node.copy()
+                                copyNode.depthLim = node.depthLim - 2
+                                copyNode.state.turn = P.swapTurn(copyNode.state.turn)
+                                copyNode.depth += 1
+                                tempVal, jnkState = ABPruning(node, -(beta), -(beta+1), False)
+                                # if someNum is >= beta the return beta
+                                if -tempVal >= beta:
+                                    print("I just Null Pruned! on beta")
+                                    return beta, jnkState
+                        elif (node.state.turn == P.WHITE and node.color == P.WHITE and node.state.whiteChecked is False) or (
+                            node.state.turn == P.BLACK and node.color == P.BLACK and node.state.blackChecked is False):
+                
+                                # Copying the node and make a null move plus lower the depthLimit by R (2)
+                                if (alpha == -math.inf):
+                                    break
+                                copyNode = node.copy()
+                                copyNode.depthLim = node.depthLim - 2
+                                copyNode.state.turn = P.swapTurn(copyNode.state.turn)
+                                copyNode.depth += 1
+                                tempVal = 0
+                                tempVal, jnkState = ABPruning(node, -(alpha-1), -alpha, False)
+                                # if someNum is >= beta the return beta
+                                if -tempVal <= alpha:
+                                    print("I just Null Pruned! on alpha")
+                                    return alpha, jnkState
+                        break; 
+    
+    node.genNextMoves()
+    if len(node.nextMoves) == 0:
+        return endStateCheck(node, nextMove)
+    else:
+        for n in node.nextMoves:
+            score, jnkState = ABNegPruning(n, -node.beta, -node.alpha, bestMoveLst)
+            if score > node.alpha:
+                if score >= node.beta:
+                    break
+                node.alpha = score
+                nextMove = n
+        return node.alpha, nextMove
+
