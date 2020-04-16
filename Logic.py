@@ -15,10 +15,19 @@ def move_piece(state, selX, selY, move):
         elif st.board[move.x()][move.y()].color == P.BLACK:
             st.blackTotalPieceVal -= st.board[move.x()][move.y()].value
     
+    originalValue = st.board[selX][selY].value
+    
     st.board[move.x()][move.y()] = st.board[selX][selY]
     st.board[selX][selY] = EMPTY
     
-    piece = st.board[move.x()][move.y()] 
+    piece = st.board[move.x()][move.y()]
+    
+    #Update the piece's value
+    if (piece.color == P.WHITE):
+        st.whiteTotalPieceVal -= originalValue
+    else:
+        st.blackTotalPieceVal -= originalValue
+    st.positionalPieceVal(piece, move.x(), move.y())
     
     if move.special == P.EN_PASSENT:
         adjust = -1
@@ -26,9 +35,9 @@ def move_piece(state, selX, selY, move):
             adjust = 1
         
         if st.board[move.x()][move.y()+adjust].color == P.WHITE:
-            st.whiteTotalPieceVal -= 1
+            st.whiteTotalPieceVal -= st.board[move.x()][move.y()+adjust].value
         elif st.board[move.x()][move.y()+adjust].color == P.BLACK:
-            st.blackTotalPieceVal -= 1
+            st.blackTotalPieceVal -= st.board[move.x()][move.y()+adjust].value
         st.board[move.x()][move.y()+adjust] = EMPTY
     elif move.special == P.CASTLE:
         if (move.x() == 2):
@@ -107,6 +116,9 @@ def is_checkmate(state, color):
         enemyColor = P.WHITE
     
     king, kingSpace = P.searchForPiece(kingId, state.board)
+    
+    if (state.whiteTotalPieceVal == king.value and state.blackTotalPieceVal == king.value):
+        return None
     
     kingCantMove = True
     checkmate = True

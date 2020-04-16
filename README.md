@@ -4,6 +4,13 @@ Capstone chess AI project
 # Goal
 Create a chess program that displays a chess board and allows for interaction through clicking the chess pieces. Human vs. human, human vs. ai, and ai vs. ai will be possible. The ai will be reasonably smart, and the user can decide how many moves the ai could look ahead.
 
+# AI Types
+0 - Heuristic takes into account difference between its and opponent's total piece values, and the difference between its and opponent's total moves. It randomly chooses nodes to search down.
+1 - Version of 0 that stores nextMoves in dict.
+2 - Version of 0 that sorts nextMoves by weight instead of randomizing it.
+4 - {Unfinished} Version of 2 that stores nextMoves in dict.
+Other - Randomly decides moves
+
 # Attribution
 All chess symbols by Cburnett is licensed under [CC BY-SA3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.en). The symbols used are:
 * [Chess klt45.svg](https://en.wikipedia.org/wiki/File:Chess_klt45.svg)
@@ -21,3 +28,25 @@ All chess symbols by Cburnett is licensed under [CC BY-SA3.0](https://creativeco
 
 # Citations
 https://www.quora.com/What-are-some-heuristics-for-quickly-evaluating-chess-positions
+
+# Times
+## vs Random Black
+### 0, Depth 3
+Lowest think time: 0.99 seconds
+Highest think time: 7.37 seconds
+Average think time: 3.35 seconds
+
+### 1, Depth 3
+Lowest think time: 0.55 seconds
+Highest think time: 16.80 seconds
+Average think time: 4.06 seconds
+
+### 2, Depth 3
+Lowest think time: 0.54 seconds
+Highest think time: 4.04 seconds
+Average think time: 1.33 seconds
+
+### 2, Depth 4
+Lowest think time: 2.71 seconds
+Highest think time: 60.50 seconds
+Average think time: 23.98 seconds

@@ -58,6 +58,9 @@ AI = 1
 HEURISTIC_LIST = [
                     "HEURISTICS",
                     "0 - Basic. Considers total piece value and maximizing possible moves",
+                    "1 - Hash. Like 0, but stores nextMoves in dictionary",
+                    "2 - Basic Sort. Like 0, but sorts nextMoves by highest weight",
+                    "4 - Hash Sort. Unfinished."
                     "Other - Moves randomly selected."
                  ]
 
@@ -118,7 +121,7 @@ def square(x,y,w,h,ic,ac,action = None, args = None):
 
 # Helper function for quit/exit button
 def quitgame():
-    pygame.quit()
+    pygame.quit()   
     quit()
 
 # Helper function to restart game
@@ -379,7 +382,7 @@ def printResults(checkmate, state):
     elif (state.whiteChecked and state.blackChecked):
         end = "Somehow both sides won simultaneously. Huh."
     elif (not state.whiteChecked and not state.blackChecked):
-        end = "Somehow neither side won without stalemating. Huh."
+        end = "Forfeit"
     elif (state.whiteChecked):
         end = "Black checkmated white"
     elif (state.blackChecked):
@@ -437,6 +440,7 @@ def gameMain():
     global whiteAITimes
     global blackAITimes
     global turn
+    global turns
     gameExit = False
     checkmate = False
     crash = False
@@ -444,12 +448,15 @@ def gameMain():
     printedResults = False
     startTime = time.perf_counter()
     turns = 0
- 
+    whiteAITimes.clear()
+    blackAITimes.clear()
  
     while not gameExit:
  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                #if not printedResults:
+                #    printResults(checkmate, state)
                 pygame.quit()
                 quit()
 

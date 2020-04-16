@@ -64,34 +64,7 @@ class Board():
         
         pieces, loc = self.getAllPieces()
         for i in range(0, len(pieces)):
-            if pieces[i].color == P.WHITE:
-                self.whiteTotalPieceVal += pieces[i].value
-                if pieces[i].value == P.PAWN_VAL:
-                    self.whiteTotalPieceVal += P.WHT_PAWN_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.ROOK_VAL:
-                    self.whiteTotalPieceVal += P.WHT_ROOK_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.KNIGHT_VAL:
-                    self.whiteTotalPieceVal += P.WHT_KNIGHT_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.BISHOP_VAL:
-                    self.whiteTotalPieceVal += P.WHT_BISHOP_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.QUEEN_VAL:
-                    self.whiteTotalPieceVal += P.WHT_QUEEN_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.KING_VAL:
-                    self.whiteTotalPieceVal += P.WHT_KING_POS_VAL_MID[loc[i][1]][loc[i][0]]
-            elif pieces[i].color == P.BLACK:
-                self.blackTotalPieceVal += pieces[i].value
-                if pieces[i].value == P.PAWN_VAL:
-                    self.blackTotalPieceVal += P.BLK_PAWN_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.ROOK_VAL:
-                    self.blackTotalPieceVal += P.BLK_ROOK_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.KNIGHT_VAL:
-                    self.blackTotalPieceVal += P.BLK_KNIGHT_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.BISHOP_VAL:
-                    self.blackTotalPieceVal += P.BLK_BISHOP_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.QUEEN_VAL:
-                    self.blackTotalPieceVal += P.BLK_QUEEN_POS_VAL[loc[i][1]][loc[i][0]]
-                elif pieces[i].value == P.KING_VAL:
-                    self.blackTotalPieceVal += P.BLK_KING_POS_VAL_MID[loc[i][1]][loc[i][0]]
+            self.positionalPieceVal(pieces[i], loc[i][0], loc[i][1])
     
     #def getAndRemoveLastState(self, num):
     #    rem = self.prevBoards[len(self.prevBoards) - num]
@@ -140,3 +113,35 @@ class Board():
     
     def pieceUnmoved(self, pieceIdent):
         return self.unmoved.count(pieceIdent)
+    
+    def positionalPieceVal(self, piece, x, y, position = True):
+        if piece.color == P.WHITE:
+            self.whiteTotalPieceVal += piece.value
+            if position:
+                if piece.value == P.PAWN_VAL:
+                    self.whiteTotalPieceVal += P.WHT_PAWN_POS_VAL[y][x]
+                elif piece.value == P.ROOK_VAL:
+                    self.whiteTotalPieceVal += P.WHT_ROOK_POS_VAL[y][x]
+                elif piece.value == P.KNIGHT_VAL:
+                    self.whiteTotalPieceVal += P.WHT_KNIGHT_POS_VAL[y][x]
+                elif piece.value == P.BISHOP_VAL:
+                    self.whiteTotalPieceVal += P.WHT_BISHOP_POS_VAL[y][x]
+                elif piece.value == P.QUEEN_VAL:
+                    self.whiteTotalPieceVal += P.WHT_QUEEN_POS_VAL[y][x]
+                elif piece.value == P.KING_VAL:
+                    self.whiteTotalPieceVal += P.WHT_KING_POS_VAL_MID[y][x]
+        elif piece.color == P.BLACK:
+            self.blackTotalPieceVal += piece.value
+            if position:
+                if piece.value == P.PAWN_VAL:
+                    self.blackTotalPieceVal += P.BLK_PAWN_POS_VAL[y][x]
+                elif piece.value == P.ROOK_VAL:
+                    self.blackTotalPieceVal += P.BLK_ROOK_POS_VAL[y][x]
+                elif piece.value == P.KNIGHT_VAL:
+                    self.blackTotalPieceVal += P.BLK_KNIGHT_POS_VAL[y][x]
+                elif piece.value == P.BISHOP_VAL:
+                    self.blackTotalPieceVal += P.BLK_BISHOP_POS_VAL[y][x]
+                elif piece.value == P.QUEEN_VAL:
+                    self.blackTotalPieceVal += P.BLK_QUEEN_POS_VAL[y][x]
+                elif piece.value == P.KING_VAL:
+                    self.blackTotalPieceVal += P.BLK_KING_POS_VAL_MID[y][x]
