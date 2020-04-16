@@ -6,6 +6,9 @@ Create a chess program that displays a chess board and allows for interaction th
 
 # AI Types
 0 - Heuristic takes into account difference between its and opponent's total piece values, and the difference between its and opponent's total moves. It randomly chooses nodes to search down.
+1 - Version of 0 that stores nextMoves in dict.
+2 - Version of 0 that sorts nextMoves by weight instead of randomizing it.
+4 - {Unfinished} Version of 2 that stores nextMoves in dict.
 Other - Randomly decides moves
 
 # Attribution
@@ -25,3 +28,25 @@ All chess symbols by Cburnett is licensed under [CC BY-SA3.0](https://creativeco
 
 # Citations
 https://www.quora.com/What-are-some-heuristics-for-quickly-evaluating-chess-positions
+
+# Times
+## vs Random Black
+### 0, Depth 3
+Lowest think time: 0.99 seconds
+Highest think time: 7.37 seconds
+Average think time: 3.35 seconds
+
+### 1, Depth 3
+Lowest think time: 0.55 seconds
+Highest think time: 16.80 seconds
+Average think time: 4.06 seconds
+
+### 2, Depth 3
+Lowest think time: 0.54 seconds
+Highest think time: 4.04 seconds
+Average think time: 1.33 seconds
+
+### 2, Depth 4
+Lowest think time: 2.71 seconds
+Highest think time: 60.50 seconds
+Average think time: 23.98 seconds
