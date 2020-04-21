@@ -175,7 +175,7 @@ def aiSearch(state, depthLim, heuristic):
     
     return node, endTime - startTime
 
-# nullMV is a variable to prevent nullmoves from chaining
+
 def ABPruning (node, alpha, beta, nullMV = True):
     node.alpha = alpha
     node.beta = beta
@@ -239,7 +239,7 @@ def checkZugzwang (node):
                 return False
     return True
 
-
+# nullMV is a variable to prevent nullmoves from chaining
 def ABNegPruning (node, alpha, beta, bestMoveLst, nullMV = True):
     node.alpha = alpha
     node.beta = beta
@@ -250,7 +250,7 @@ def ABNegPruning (node, alpha, beta, bestMoveLst, nullMV = True):
         return node.weight, nextMove
     # Checking in null move is possible (No check, can't chain, needs not to be the 0 move, no zugzwang)
     
-    elif (nullMV and node.depth < node.depthLim - 2 and node.depth != 0 and not checkZugzwang(node)):
+    elif (nullMV and node.depth < node.depthLim - 2 and node.depth != 0 and checkZugzwang(node) is False):
         if (node.state.turn == P.WHITE and node.state.whiteChecked is False) or (
             node.state.turn == P.BLACK and node.state.blackChecked is False):
                
@@ -261,9 +261,9 @@ def ABNegPruning (node, alpha, beta, bestMoveLst, nullMV = True):
             copyNode.depth += 1
             tempVal = 0
             if (beta == math.inf):
-                tempVal, jnkState = ABPruning(node, -(1000001), -(1000000), False)
+                tempVal, jnkState = ABNegPruning(node, -(1000001), -(1000000), bestMoveLst, False)
             else:
-                tempVal, jnkState = ABPruning(node, -(beta), -(beta+1), False)
+                tempVal, jnkState = ABNegPruning(node, -(beta), -(beta+1), bestMoveLst,  False)
             print (tempVal, "beta:", beta)
             # if someNum is >= beta the return beta
             # need to figure out if I need to negate the tempVal
@@ -276,7 +276,7 @@ def ABNegPruning (node, alpha, beta, bestMoveLst, nullMV = True):
         return endStateCheck(node, nextMove)
     else:
         for n in node.nextMoves:
-            score, jnkState = ABNegPruning(n, -node.beta, -node.alpha, bestMoveLst)
+            score, jnkState = ABNegPruning(n, -node.beta, -node.alpha, bestMoveLst, nullMV)
             if score > node.alpha:
                 if score >= node.beta:
                     break
