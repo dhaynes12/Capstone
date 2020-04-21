@@ -51,6 +51,7 @@ startTime = 0
 whiteAITimes = []
 blackAITimes = []
 turns = 0
+updateCycle = False
 
 # Constants
 HUMAN = 0
@@ -176,6 +177,7 @@ def makeMove(moveCoords):
     global selectMoves
     global selectedSpace
     global turns
+    global updateCycle
     
     movement = selectMoves[selectMoves.index(moveCoords)]
     
@@ -190,6 +192,7 @@ def makeMove(moveCoords):
         selectMoves.clear()
     
     turns += 1
+    updateCycle = True
     
     #print()
     #print("White Total Piece Val:", state.whiteTotalPieceVal)
@@ -463,6 +466,7 @@ def gameMain():
     global blackAITimes
     global turn
     global turns
+    global updateCycle
     gameExit = False
     checkmate = False
     crash = False
@@ -470,6 +474,7 @@ def gameMain():
     printedResults = False
     startTime = time.perf_counter()
     turns = 0
+    extraCycle = False
     whiteAITimes.clear()
     blackAITimes.clear()
  
@@ -560,7 +565,6 @@ def gameMain():
             gameDisplay.blit(TextSurf, TextRect)
             checkmate = None
 
-
         # Buttons for new game or exit after checkmate
         if checkmate == True or checkmate == None or crash:
             button("New Game",165,500,100,50,green,red,newGame)
@@ -569,11 +573,25 @@ def gameMain():
             if not printedResults:
                 printResults(checkmate, state)
                 printedResults = True
+        elif state.turn == P.WHITE:
+            text = pygame.font.SysFont("agencyfb",42)
+            TextSurf, TextRect = textObjects("White's turn", text)
+            TextRect.center = ((display_width/2),(display_height/8) * 7)
+            gameDisplay.blit(TextSurf, TextRect)
+        elif state.turn == P.BLACK:
+            text = pygame.font.SysFont("agencyfb",42)
+            TextSurf, TextRect = textObjects("Black's turn", text)
+            TextRect.center = ((display_width/2),(display_height/8) * 7)
+            gameDisplay.blit(TextSurf, TextRect)
+        
+        if (extraCycle):
+            updateCycle = False
+            extraCycle = False
         
 
         pygame.display.update()
         clock.tick(15)
-        if not crash and ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and checkmate != True and checkmate != None:
+        if not updateCycle and not crash and ((state.turn == P.WHITE and whitePlayer == AI) or (state.turn == P.BLACK and blackPlayer == AI)) and checkmate != True and checkmate != None:
             # AI Control
             
             depthLim = 0
@@ -600,3 +618,5 @@ def gameMain():
                 state = a.state
                 crashedColor = P.colorToStr(a.aiColor)
                 print(a)
+        elif updateCycle:
+            extraCycle = True
