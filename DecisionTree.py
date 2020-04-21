@@ -178,12 +178,12 @@ def aiSearch(state, depthLim, heuristic):
     bestMoveLst = [tempNode]
     
     # Change herusitic value to 3 later
-    if heuristic == NEGMAX:
+    if heuristic == NEGMAX or heuristic == NEGMAX_POS:
         for i in range(1, depthLim + 1):
             tempNode.depthLim = i
             value, node = ABNegPruning(tempNode, -math.inf, math.inf, bestMoveLst)
             bestMoveLst.append(node.state)
-            print("Current best move:", node.state, "\nCurrent best score:", value, "\nTotal Nodes:", totalNodes)
+            #print("Current best move:", node.state, "\nCurrent best score:", value, "\nTotal Nodes:", totalNodes)
     else:
         value, node = ABPruning(tempNode, -math.inf, math.inf)
         print(value)
@@ -293,11 +293,11 @@ def ABNegPruning (node, alpha, beta, bestMoveLst, nullMV = True):
                 tempVal, jnkState = ABNegPruning(node, -(1000001), -(1000000), bestMoveLst, False)
             else:
                 tempVal, jnkState = ABNegPruning(node, -(beta), -(beta+1), bestMoveLst,  False)
-            print (tempVal, "beta:", beta)
+            #print (tempVal, "beta:", beta)
             # if someNum is >= beta the return beta
             # need to figure out if I need to negate the tempVal
             if tempVal >= beta:
-                print("I just Null Pruned! on beta")
+                #print("I just Null Pruned! on beta")
                 return beta, nextMove 
     
     node.genNextMoves()
