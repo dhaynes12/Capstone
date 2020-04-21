@@ -5,11 +5,15 @@ Capstone chess AI project
 Create a chess program that displays a chess board and allows for interaction through clicking the chess pieces. Human vs. human, human vs. ai, and ai vs. ai will be possible. The ai will be reasonably smart, and the user can decide how many moves the ai could look ahead.
 
 # AI Types
-0 - Heuristic takes into account difference between its and opponent's total piece values, and the difference between its and opponent's total moves. It randomly chooses nodes to search down.
-1 - Version of 0 that stores nextMoves in dict.
-2 - Version of 0 that sorts nextMoves by weight instead of randomizing it.
-4 - {Unfinished} Version of 2 that stores nextMoves in dict.
-Other - Randomly decides moves
+0 - Basic. Considers total piece value and maximizing possible moves
+1 - Hash. Like 0, but stores nextMoves in dictionary
+2 - Basic Sort. Like 0, but sorts nextMoves by highest weight
+3 - NegaMax
+4 - Hash Sort. Unfinished.
+5 - NegaMax Position. Like NegaMax, but uses positional values
+6 - Basic Sort Position. Like Basic Sort, but uses positional values
+7 - Hash Sort Position. Like Hash Sort, but uses positional values. Unfinished
+Other - Moves randomly selected.
 
 # Attribution
 All chess symbols by Cburnett is licensed under [CC BY-SA3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.en). The symbols used are:

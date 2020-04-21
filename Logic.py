@@ -8,14 +8,16 @@ def select_piece(state, x, y):
 def move_piece(state, selX, selY, move):
     st = state.copy()
     
+    st.undoPositionalPieceVal(st.board[selX][selY], selX, selY)
+    
     """Update total piece value if there's a capture"""
     if (isinstance(st.board[move.x()][move.y()], P.Piece)):
         if st.board[move.x()][move.y()].color == P.WHITE:
             st.whiteTotalPieceVal -= st.board[move.x()][move.y()].value
         elif st.board[move.x()][move.y()].color == P.BLACK:
             st.blackTotalPieceVal -= st.board[move.x()][move.y()].value
-    
-    originalValue = st.board[selX][selY].value
+            st.blackPosPieceVal -= st.board[move.x()][move.y()].value
+        st.undoPositionalPieceVal(st.board[move.x()][move.y()], move.x(), move.y())
     
     st.board[move.x()][move.y()] = st.board[selX][selY]
     st.board[selX][selY] = EMPTY
@@ -23,11 +25,7 @@ def move_piece(state, selX, selY, move):
     piece = st.board[move.x()][move.y()]
     
     #Update the piece's value
-    if (piece.color == P.WHITE):
-        st.whiteTotalPieceVal -= originalValue
-    else:
-        st.blackTotalPieceVal -= originalValue
-    st.positionalPieceVal(piece, move.x(), move.y())
+    st.positionalPieceVal(piece, move.x(), move.y(), updateTotal=False)
     
     if move.special == P.EN_PASSENT:
         adjust = -1
@@ -36,8 +34,10 @@ def move_piece(state, selX, selY, move):
         
         if st.board[move.x()][move.y()+adjust].color == P.WHITE:
             st.whiteTotalPieceVal -= st.board[move.x()][move.y()+adjust].value
+            st.whitePosPieceVal -= st.board[move.x()][move.y()+adjust].value
         elif st.board[move.x()][move.y()+adjust].color == P.BLACK:
             st.blackTotalPieceVal -= st.board[move.x()][move.y()+adjust].value
+            st.blackPosPieceVal -= st.board[move.x()][move.y()+adjust].value
         st.board[move.x()][move.y()+adjust] = EMPTY
     elif move.special == P.CASTLE:
         if (move.x() == 2):
@@ -50,11 +50,14 @@ def move_piece(state, selX, selY, move):
             st.unmoved.remove(st.board[5][move.y()].ident)
     elif (isinstance(st.board[move.x()][move.y()], P.Pawn) and ((piece.color == P.WHITE and move.y() == 7) or (piece.color == P.BLACK and move.y() == 0))):
         promotion = P.Queen(piece.ident, piece.color)
-        st.board[move.x()][move.y()] = promotion
         if (piece.color == P.WHITE):
             st.whiteTotalPieceVal += (P.QUEEN_VAL - P.PAWN_VAL)
+            st.whitePosPieceVal -= piece.value
         elif (piece.color == P.BLACK):
             st.blackTotalPieceVal += (P.QUEEN_VAL - P.PAWN_VAL)
+            st.blackPosPieceVal -= piece.value
+        st.board[move.x()][move.y()] = promotion
+        st.positionalPieceVal(promotion, move.x(), move.y(), updateTotal=False)
         """Need to figure out how to let the user select the promotion"""
     
     kingId = 0
@@ -85,7 +88,7 @@ def move_piece(state, selX, selY, move):
     set_check(st)
     
     st.turn = P.swapTurn(st.turn)
-        
+    
     return st
 
 """Check if the opposing king is put in check, and sets the corresponding check boolean if they are in check"""
@@ -157,7 +160,7 @@ def is_checkmate(state, color):
         if (len(oppPieces) > 1):
             raise Exception("Somehow multiple pieces directly endangered the King, which would only happen if the King finished its turn still in check")
         
-        if (len(oppPieces) == 0):
+        if (len(oppPieces) == 0) or ((type(oppPieces[0]) == P.Knight or type(oppPieces[0]) == P.Pawn) and oppSpaces[0] in friendMoves):
             checkmate = False
         elif (type(oppPieces[0]) == P.Queen or type(oppPieces[0]) == P.Rook or type(oppPieces[0]) == P.Bishop):
             for between in betweenSpaces(state, kingSpace, oppSpaces[0]):

@@ -32,6 +32,8 @@ class Board():
         self.blackKingId = 12
         self.whiteTotalPieceVal = 0
         self.blackTotalPieceVal = 0
+        self.whitePosPieceVal = 0
+        self.blackPosPieceVal = 0
         self.passentable = None
         
         for x in range(0, 8):
@@ -62,9 +64,7 @@ class Board():
                 self.board[i][1] = W_PAWNS[i]
                 self.board[i][6] = B_PAWNS[i]
         
-        pieces, loc = self.getAllPieces()
-        for i in range(0, len(pieces)):
-            self.positionalPieceVal(pieces[i], loc[i][0], loc[i][1])
+        self.initializePosVals()
     
     #def getAndRemoveLastState(self, num):
     #    rem = self.prevBoards[len(self.prevBoards) - num]
@@ -107,6 +107,8 @@ class Board():
         cpyBoard.blackKingId = self.blackKingId
         cpyBoard.whiteTotalPieceVal = self.whiteTotalPieceVal
         cpyBoard.blackTotalPieceVal = self.blackTotalPieceVal
+        cpyBoard.whitePosPieceVal = self.whitePosPieceVal
+        cpyBoard.blackPosPieceVal = self.blackPosPieceVal
         cpyBoard.passentable = self.passentable
 
         return cpyBoard
@@ -114,34 +116,71 @@ class Board():
     def pieceUnmoved(self, pieceIdent):
         return self.unmoved.count(pieceIdent)
     
-    def positionalPieceVal(self, piece, x, y, position = True):
+    def initializePosVals(self):
+        pieces, loc = self.getAllPieces()
+        for i in range(0, len(pieces)):
+            self.positionalPieceVal(pieces[i], loc[i][0], loc[i][1])
+    
+    def positionalPieceVal(self, piece, x, y, updateTotal=True):
         if piece.color == P.WHITE:
-            self.whiteTotalPieceVal += piece.value
-            if position:
-                if piece.value == P.PAWN_VAL:
-                    self.whiteTotalPieceVal += P.WHT_PAWN_POS_VAL[y][x]
-                elif piece.value == P.ROOK_VAL:
-                    self.whiteTotalPieceVal += P.WHT_ROOK_POS_VAL[y][x]
-                elif piece.value == P.KNIGHT_VAL:
-                    self.whiteTotalPieceVal += P.WHT_KNIGHT_POS_VAL[y][x]
-                elif piece.value == P.BISHOP_VAL:
-                    self.whiteTotalPieceVal += P.WHT_BISHOP_POS_VAL[y][x]
-                elif piece.value == P.QUEEN_VAL:
-                    self.whiteTotalPieceVal += P.WHT_QUEEN_POS_VAL[y][x]
-                elif piece.value == P.KING_VAL:
-                    self.whiteTotalPieceVal += P.WHT_KING_POS_VAL_MID[y][x]
+            if (updateTotal):
+                self.whiteTotalPieceVal += piece.value
+            self.whitePosPieceVal += piece.value
+            if piece.value == P.PAWN_VAL:
+                self.whitePosPieceVal += P.WHT_PAWN_POS_VAL[y][x]
+            elif piece.value == P.ROOK_VAL:
+                self.whitePosPieceVal += P.WHT_ROOK_POS_VAL[y][x]
+            elif piece.value == P.KNIGHT_VAL:
+                self.whitePosPieceVal += P.WHT_KNIGHT_POS_VAL[y][x]
+            elif piece.value == P.BISHOP_VAL:
+                self.whitePosPieceVal += P.WHT_BISHOP_POS_VAL[y][x]
+            elif piece.value == P.QUEEN_VAL:
+                self.whitePosPieceVal += P.WHT_QUEEN_POS_VAL[y][x]
+            #elif piece.value == P.KING_VAL:
+                #self.whitePosPieceVal += P.WHT_KING_POS_VAL_MID[y][x]
         elif piece.color == P.BLACK:
-            self.blackTotalPieceVal += piece.value
-            if position:
-                if piece.value == P.PAWN_VAL:
-                    self.blackTotalPieceVal += P.BLK_PAWN_POS_VAL[y][x]
-                elif piece.value == P.ROOK_VAL:
-                    self.blackTotalPieceVal += P.BLK_ROOK_POS_VAL[y][x]
-                elif piece.value == P.KNIGHT_VAL:
-                    self.blackTotalPieceVal += P.BLK_KNIGHT_POS_VAL[y][x]
-                elif piece.value == P.BISHOP_VAL:
-                    self.blackTotalPieceVal += P.BLK_BISHOP_POS_VAL[y][x]
-                elif piece.value == P.QUEEN_VAL:
-                    self.blackTotalPieceVal += P.BLK_QUEEN_POS_VAL[y][x]
-                elif piece.value == P.KING_VAL:
-                    self.blackTotalPieceVal += P.BLK_KING_POS_VAL_MID[y][x]
+            if (updateTotal):
+                self.blackTotalPieceVal += piece.value
+            self.blackPosPieceVal += piece.value
+            if piece.value == P.PAWN_VAL:
+                self.blackPosPieceVal += P.BLK_PAWN_POS_VAL[y][x]
+            elif piece.value == P.ROOK_VAL:
+                self.blackPosPieceVal += P.BLK_ROOK_POS_VAL[y][x]
+            elif piece.value == P.KNIGHT_VAL:
+                self.blackPosPieceVal += P.BLK_KNIGHT_POS_VAL[y][x]
+            elif piece.value == P.BISHOP_VAL:
+                self.blackPosPieceVal += P.BLK_BISHOP_POS_VAL[y][x]
+            elif piece.value == P.QUEEN_VAL:
+                self.blackPosPieceVal += P.BLK_QUEEN_POS_VAL[y][x]
+            #elif piece.value == P.KING_VAL:
+                #self.blackPosPieceVal += P.BLK_KING_POS_VAL_MID[y][x]
+    
+    def undoPositionalPieceVal(self, piece, x, y):
+        if piece.color == P.WHITE:
+            self.whitePosPieceVal -= piece.value
+            if piece.value == P.PAWN_VAL:
+                self.whitePosPieceVal -= P.WHT_PAWN_POS_VAL[y][x]
+            elif piece.value == P.ROOK_VAL:
+                self.whitePosPieceVal -= P.WHT_ROOK_POS_VAL[y][x]
+            elif piece.value == P.KNIGHT_VAL:
+                self.whitePosPieceVal -= P.WHT_KNIGHT_POS_VAL[y][x]
+            elif piece.value == P.BISHOP_VAL:
+                self.whitePosPieceVal -= P.WHT_BISHOP_POS_VAL[y][x]
+            elif piece.value == P.QUEEN_VAL:
+                self.whitePosPieceVal -= P.WHT_QUEEN_POS_VAL[y][x]
+            #elif piece.value == P.KING_VAL:
+            #    self.whitePosPieceVal -= P.WHT_KING_POS_VAL_MID[y][x]
+        elif piece.color == P.BLACK:
+            self.blackPosPieceVal -= piece.value
+            if piece.value == P.PAWN_VAL:
+                self.blackPosPieceVal -= P.BLK_PAWN_POS_VAL[y][x]
+            elif piece.value == P.ROOK_VAL:
+                self.blackPosPieceVal -= P.BLK_ROOK_POS_VAL[y][x]
+            elif piece.value == P.KNIGHT_VAL:
+                self.blackPosPieceVal -= P.BLK_KNIGHT_POS_VAL[y][x]
+            elif piece.value == P.BISHOP_VAL:
+                self.blackPosPieceVal -= P.BLK_BISHOP_POS_VAL[y][x]
+            elif piece.value == P.QUEEN_VAL:
+                self.blackPosPieceVal -= P.BLK_QUEEN_POS_VAL[y][x]
+            #elif piece.value == P.KING_VAL:
+            #    self.blackPosPieceVal -= P.BLK_KING_POS_VAL_MID[y][x]

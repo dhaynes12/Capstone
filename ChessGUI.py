@@ -60,7 +60,11 @@ HEURISTIC_LIST = [
                     "0 - Basic. Considers total piece value and maximizing possible moves",
                     "1 - Hash. Like 0, but stores nextMoves in dictionary",
                     "2 - Basic Sort. Like 0, but sorts nextMoves by highest weight",
-                    "4 - Hash Sort. Unfinished."
+                    "3 - NegaMax",
+                    "4 - Hash Sort. Unfinished.",
+                    "5 - NegaMax Position. Like NegaMax, but uses positional values",
+                    "6 - Basic Sort Position. Like Basic Sort, but uses positional values",
+                    "7 - Hash Sort Position. Like Hash Sort, but uses positional values. Unfinished",
                     "Other - Moves randomly selected."
                  ]
 
@@ -186,6 +190,13 @@ def makeMove(moveCoords):
         selectMoves.clear()
     
     turns += 1
+    
+    #print()
+    #print("White Total Piece Val:", state.whiteTotalPieceVal)
+    #print("White Pos Piece Val:", state.whitePosPieceVal)
+    #print("Black Total Piece Val:", state.blackTotalPieceVal)
+    #print("Black Pos Piece Val:", state.blackPosPieceVal)
+    #print()
 
 # start button function
 def startGame(args):
@@ -330,11 +341,11 @@ def gameIntro():
             box.draw(gameDisplay)
 
         # Lower Left Heuristic List
-        text = pygame.font.SysFont("agencyfb",16)
-        for i in range(0, len(HEURISTIC_LIST)):
-            TextSurf, TextRect = textObjects(HEURISTIC_LIST[i], text)
-            TextRect.topleft = (25, 500 + (i * 16))
-            gameDisplay.blit(TextSurf, TextRect)
+        #text = pygame.font.SysFont("agencyfb",16)
+        #for i in range(0, len(HEURISTIC_LIST)):
+        #    TextSurf, TextRect = textObjects(HEURISTIC_LIST[i], text)
+        #    TextRect.topleft = (25, 130 + (i * 16))
+        #    gameDisplay.blit(TextSurf, TextRect)
 
         pygame.display.update()
         clock.tick(15)
@@ -406,23 +417,34 @@ def printResults(checkmate, state):
             pType = "AI"
         print("Type:", pType)
         
+        if (side == P.WHITE):
+            print("White Total Piece Val:", state.whiteTotalPieceVal)
+            print("White Pos Piece Val:", state.whitePosPieceVal)
+        else:
+            print("Black Total Piece Val:", state.blackTotalPieceVal)
+            print("Black Pos Piece Val:", state.blackPosPieceVal)
+        
         if not sideHuman:
             minAITime = 0
             maxAITime = 0
             avgAITime = 0
             
-            if (side == P.WHITE):
-                minAITime = min(whiteAITimes)
-                maxAITime = max(whiteAITimes)
-                avgAITime = statistics.mean(whiteAITimes)
-            else:
-                minAITime = min(blackAITimes)
-                maxAITime = max(blackAITimes)
-                avgAITime = statistics.mean(blackAITimes)
-            print("Lowest think time:", "{0:.{1}f}".format(minAITime, 2), "seconds")
-            print("Highest think time:", "{0:.{1}f}".format(maxAITime, 2), "seconds")
-            print("Average think time:", "{0:.{1}f}".format(avgAITime, 2), "seconds")
-            print()
+            try:
+                if (side == P.WHITE):
+                    minAITime = min(whiteAITimes)
+                    maxAITime = max(whiteAITimes)
+                    avgAITime = statistics.mean(whiteAITimes)
+                else:
+                    minAITime = min(blackAITimes)
+                    maxAITime = max(blackAITimes)
+                    avgAITime = statistics.mean(blackAITimes)
+                print("Lowest think time:", "{0:.{1}f}".format(minAITime, 2), "seconds")
+                print("Highest think time:", "{0:.{1}f}".format(maxAITime, 2), "seconds")
+                print("Average think time:", "{0:.{1}f}".format(avgAITime, 2), "seconds")
+            except ValueError:
+                print("Not enough information to display lowest, highest, and average think times.")
+                
+        print()
             
             
     
@@ -455,8 +477,8 @@ def gameMain():
  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                #if not printedResults:
-                #    printResults(checkmate, state)
+                if not printedResults:
+                    printResults(checkmate, state)
                 pygame.quit()
                 quit()
 

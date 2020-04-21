@@ -13,6 +13,7 @@ stalemate.board[5][1] = P.Knight(102, P.BLACK)
 stalemate.board[7][2] = P.Rook(103, P.BLACK)
 stalemate.board[7][7] = P.King(stalemate.blackKingId, P.BLACK)
 stalemate.unmoved = []
+stalemate.initializePosVals()
 
 unknownError = B.Board()
 unknownError = Logic.move_piece(unknownError, 4, 1, P.Move((4,3), P.NON_CAPTURE))
@@ -22,6 +23,7 @@ unknownError = Logic.move_piece(unknownError, 5, 7, P.Move((6,6)))
 unknownError = Logic.move_piece(unknownError, 5, 0, P.Move((2,3)))
 unknownError = Logic.move_piece(unknownError, 0, 6, P.Move((0,4), P.NON_CAPTURE))
 unknownError = Logic.move_piece(unknownError, 5, 2, P.Move((5,6)))
+unknownError.initializePosVals()
 
 crash = B.Board(True)
 crash.board[5][0] = P.Bishop(100, P.WHITE)
@@ -44,6 +46,7 @@ crash.board[2][7] = P.Rook(114, P.WHITE)
 crash.turn = P.BLACK
 crash.blackChecked = True
 crash.unmoved = [101, 102]
+crash.initializePosVals()
 
 crash2 = B.Board(True)
 crash2.board[0][1] = P.Knight(100, P.WHITE)
@@ -57,6 +60,7 @@ crash2.board[4][4] = P.Pawn(106, P.BLACK)
 crash2.board[5][1] = P.King(crash2.whiteKingId, P.WHITE)
 crash2.turn = P.BLACK
 crash2.unmoved = [102]
+crash2.initializePosVals()
 
 crash3 = B.Board(True)
 crash3.board[2][0] = P.King(crash3.whiteKingId, P.WHITE)
@@ -67,6 +71,7 @@ crash3.board[5][3] = P.Queen(102, P.WHITE)
 crash3.turn = P.WHITE
 crash3.whiteChecked = True
 crash3.unmoved = []
+crash3.initializePosVals()
 
 crash4 = B.Board(True)
 crash4.board[2][7] = P.Rook(100, P.WHITE)
@@ -77,6 +82,7 @@ crash4.board[6][7] = P.King(crash4.blackKingId, P.BLACK)
 crash4.turn = P.BLACK
 crash4.blackChecked = True
 crash4.unmoved = []
+crash4.initializePosVals()
 
 @pytest.mark.parametrize(
     "state,depthLim,heuristic",
@@ -85,6 +91,7 @@ crash4.unmoved = []
     ]
 )
 def test_move_return(state, depthLim,heuristic):
+    #pytest.set_trace()
     aiSearch(state, depthLim,heuristic)
     assert 1
 

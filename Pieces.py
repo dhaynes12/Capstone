@@ -138,7 +138,7 @@ def isOccupiedBy(board, space, move):
    color - The color of the piece that's calling this function
    xIncrease - The x direction of the line
    yIncrease - The y direction of the line"""
-def lookLine(board, space, color, xIncrease, yIncrease):
+def lookLine(board, space, color, xIncrease, yIncrease, ident):
     v = []
     x = xIncrease
     y = yIncrease
@@ -148,7 +148,7 @@ def lookLine(board, space, color, xIncrease, yIncrease):
         occupy = isOccupiedBy(board, space, (x, y))
         
         if isinstance(occupy, Empty) or (isinstance(occupy, Piece) and occupy.color != color):
-            v.append(Move(moveSpace(space, (x, y)), originSpace=space))
+            v.append(Move(moveSpace(space, (x, y)), originSpace=space, ident=ident))
             x += xIncrease
             y += yIncrease
     
@@ -206,10 +206,11 @@ def searchForPiece(pieceId, board):
     return None, None
 
 class Move():
-    def __init__(self, space, special=None, originSpace=None):
+    def __init__(self, space, special=None, originSpace=None, ident=None):
         self.space = space
         self.special = special
         self.originSpace = originSpace
+        self.ident = ident
     
     def x(self):
         return self.space[0]
@@ -228,9 +229,11 @@ class Move():
     
     def __eq__(self, compare):
         if (isinstance(compare, Move)):
-            return self.space == compare.space and self.special == compare.special
+            return self.x() == compare.x() and self.y() == compare.y() and self.special == compare.special
         elif (isinstance(compare, tuple)):
             return self.space[0] == compare[0] and self.space[1] == compare[1]
+        elif (compare == None):
+            return False
         
         raise TypeError
         
@@ -283,31 +286,31 @@ class Pawn(Piece):
         
         """Standard Movement"""
         if (isinstance(isOccupiedBy(b.board, space, (0, self.upMove)), Empty)):
-            v.append(Move(moveSpace(space, (0, self.upMove)), NON_CAPTURE, originSpace=space))
+            v.append(Move(moveSpace(space, (0, self.upMove)), NON_CAPTURE, originSpace=space, ident=self.ident))
         
         """Double Move"""
         if (b.pieceUnmoved(self.ident) and 
         isinstance(isOccupiedBy(b.board, space, (0, self.upMove)), Empty) and 
         isinstance(isOccupiedBy(b.board, space, (0, self.upMove * 2)), Empty)):            
-            v.append(Move(moveSpace(space, (0, self.upMove * 2)), NON_CAPTURE, originSpace=space))
+            v.append(Move(moveSpace(space, (0, self.upMove * 2)), NON_CAPTURE, originSpace=space, ident=self.ident))
         
         """Capture"""
         upLeft = isOccupiedBy(b.board, space, (-1, self.upMove))
         upRight = isOccupiedBy(b.board, space, (1, self.upMove))
         if (isinstance(upLeft, Piece) and upLeft.color != self.color):
-            v.append(Move(moveSpace(space, (-1, self.upMove)), originSpace=space))
+            v.append(Move(moveSpace(space, (-1, self.upMove)), originSpace=space, ident=self.ident))
         
         if (isinstance(upRight, Piece) and upRight.color != self.color):
-            v.append(Move(moveSpace(space, (1, self.upMove)), originSpace=space))
+            v.append(Move(moveSpace(space, (1, self.upMove)), originSpace=space, ident=self.ident))
         
         """En-Passent"""
         left = isOccupiedBy(b.board, space, (-1, 0))
         right = isOccupiedBy(b.board, space, (1, 0))
         if (isinstance(left, Pawn) and self.validPassent(b, (space[0] - 1, space[1]))):
-            v.append(Move(moveSpace(space, (-1, self.upMove)), EN_PASSENT, originSpace=space))
+            v.append(Move(moveSpace(space, (-1, self.upMove)), EN_PASSENT, originSpace=space, ident=self.ident))
             
         if (isinstance(right, Pawn) and self.validPassent(b, (space[0] + 1, space[1]))):
-            v.append(Move(moveSpace(space, (1, self.upMove)), EN_PASSENT, originSpace=space))
+            v.append(Move(moveSpace(space, (1, self.upMove)), EN_PASSENT, originSpace=space, ident=self.ident))
         
         return v
 
@@ -333,7 +336,7 @@ class Knight(Piece):
             occupy = isOccupiedBy(b.board, space, i)
             
             if (isinstance(occupy, Empty) or (isinstance(occupy, Piece) and occupy.color != self.color)):
-                v.append(Move(moveSpace(space, i), originSpace=space))
+                v.append(Move(moveSpace(space, i), originSpace=space, ident=self.ident))
         
         return v
 
@@ -345,10 +348,10 @@ class Bishop(Piece):
         
         v = []
         
-        v.extend(lookLine(b.board, space, self.color, 1, 1))
-        v.extend(lookLine(b.board, space, self.color, 1, -1))
-        v.extend(lookLine(b.board, space, self.color, -1, -1))
-        v.extend(lookLine(b.board, space, self.color, -1, 1))
+        v.extend(lookLine(b.board, space, self.color, 1, 1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, 1, -1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, -1, -1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, -1, 1, self.ident))
         
         return v
 
@@ -360,10 +363,10 @@ class Rook(Piece):
         
         v = []
         
-        v.extend(lookLine(b.board, space, self.color, 0, 1))
-        v.extend(lookLine(b.board, space, self.color, 1, 0))
-        v.extend(lookLine(b.board, space, self.color, 0, -1))
-        v.extend(lookLine(b.board, space, self.color, -1, 0))
+        v.extend(lookLine(b.board, space, self.color, 0, 1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, 1, 0, self.ident))
+        v.extend(lookLine(b.board, space, self.color, 0, -1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, -1, 0, self.ident))
         
         return v
 
@@ -375,14 +378,14 @@ class Queen(Piece):
         
         v = []
         
-        v.extend(lookLine(b.board, space, self.color, 0, 1))
-        v.extend(lookLine(b.board, space, self.color, 1, 0))
-        v.extend(lookLine(b.board, space, self.color, 0, -1))
-        v.extend(lookLine(b.board, space, self.color, -1, 0))
-        v.extend(lookLine(b.board, space, self.color, 1, 1))
-        v.extend(lookLine(b.board, space, self.color, 1, -1))
-        v.extend(lookLine(b.board, space, self.color, -1, -1))
-        v.extend(lookLine(b.board, space, self.color, -1, 1))
+        v.extend(lookLine(b.board, space, self.color, 0, 1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, 1, 0, self.ident))
+        v.extend(lookLine(b.board, space, self.color, 0, -1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, -1, 0, self.ident))
+        v.extend(lookLine(b.board, space, self.color, 1, 1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, 1, -1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, -1, -1, self.ident))
+        v.extend(lookLine(b.board, space, self.color, -1, 1, self.ident))
         
         return v
 
@@ -413,7 +416,7 @@ class King(Piece):
                     continue
                 occupy = isOccupiedBy(b.board, space, (x, y))
                 if (isinstance(occupy, Empty) or (isinstance(occupy, Piece) and occupy.color != self.color)):
-                    v.append(Move(moveSpace(space, (x, y)), originSpace=space))
+                    v.append(Move(moveSpace(space, (x, y)), originSpace=space, ident=self.ident))
         
         """Castling"""
         """Don't check for castling if this validMoves is called as part of another king's castle check"""
@@ -440,12 +443,12 @@ class King(Piece):
                     leftSpaces = [moveSpace(space, (-1, 0)), moveSpace(space, (-2, 0)), moveSpace(space, (-3, 0))]
                     
                     if (not hasSharedSpaces(dangerSpaces, leftSpaces) and spacesAreFree(b, leftSpaces)):
-                        v.append(Move(moveSpace(space, (-2, 0)), CASTLE, originSpace=space))
+                        v.append(Move(moveSpace(space, (-2, 0)), CASTLE, originSpace=space, ident=self.ident))
                 
                 if (rightRookUnmoved):
                     rightSpaces = [moveSpace(space, (1, 0)), moveSpace(space, (2, 0))]
                     
                     if (not hasSharedSpaces(dangerSpaces, rightSpaces) and spacesAreFree(b, rightSpaces)):
-                        v.append(Move(moveSpace(space, (2, 0)), CASTLE, originSpace=space))
+                        v.append(Move(moveSpace(space, (2, 0)), CASTLE, originSpace=space, ident=self.ident))
         
         return v

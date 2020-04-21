@@ -9,6 +9,7 @@ import random
 """Global Values"""
 maxNodeDepth = 0
 totalNodes = 0
+prevMove = None
 
 """Heuristic Types"""
 BASIC = 0
@@ -16,6 +17,9 @@ HASH = 1
 BASIC_SORT = 2
 NEGMAX = 3
 HASH_SORT = 4
+NEGMAX_POS = 5
+BASIC_SORT_POS = 6
+HASH_SORT_POS = 7
 
 class AI_Exception(Exception):
     def __init__(self, state, mess, aiColor):
@@ -39,16 +43,16 @@ class Node(object):
         self.heuristic = heuristic
         self.alpha = 0              # alpha and beta are values for pruning the tree
         self.beta = 0
-        if (self.heuristic == HASH or self.heuristic == HASH_SORT):
+        if (self.heuristic == HASH or self.heuristic == HASH_SORT or self.heuristic == HASH_SORT_POS):
             self.nextMoves = {}
         else:
             self.nextMoves = []
         self.weight = 0             # How good of a move is current node
         self.space = space          # The coordinates of the piece being moved
         self.move = move            # The coordinates that the piece is being moved to
+        self._equalWeights = True
 
-        # if depth is at limit call weight function
-        if depth == depthLim or self.heuristic == BASIC_SORT or self.heuristic == HASH_SORT:
+        if depth == depthLim or self.heuristic == BASIC_SORT or self.heuristic == HASH_SORT  or self.heuristic == BASIC_SORT_POS or self.heuristic == HASH_SORT_POS:
             self.setWeight()
         if depth < depthLim:
             global maxNodeDepth
@@ -63,11 +67,12 @@ class Node(object):
         rangePieces = range(0, len(pieces))
         
         n = 0
-        equalWeights = True
+        self._equalWeights = True
         
-        if not (self.heuristic == BASIC_SORT or self.heuristic == HASH_SORT):
-            equalWeights = False
+        if not (self.heuristic == BASIC_SORT or self.heuristic == HASH_SORT or self.heuristic == BASIC_SORT_POS or self.heuristic == HASH_SORT_POS):
+            self._equalWeights = False
         
+        locOfPieceWithPrevMove = None
         for i in rangePieces:
             if not isinstance(pieces[i], P.Piece):
                 continue
@@ -76,18 +81,13 @@ class Node(object):
                 rangeMoves = range(0, len(moves))
                 
                 for j in rangeMoves:
-                    tempState = Logic.move_piece(self.state, locs[i][0], locs[i][1], moves[j])
-                    if (tempState != None):
-                        tempNode = Node(self.color, tempState, self.depth+1, self.depthLim, self.heuristic, locs[i], moves[j])
+                    #if prevMove == None or (moves[j] != prevMove and moves[j].ident == prevMove.ident):
+                    self.addNextMove(moves[j], locs[i])
+                    #else:
+                    #    locOfPieceWithPrevMove = locs[i]
                         
-                        if equalWeights and len(self.nextMoves) > 0 and tempNode.weight != self.nextMoves[0].weight:
-                            equalWeights = False
-                        
-                        if (type(self.nextMoves) == dict):
-                            self.nextMoves[n] = tempNode
-                            n += 1
-                        else:
-                            self.nextMoves.append(tempNode)
+        #if (len(self.nextMoves) == 0 and prevMove != None):
+        #    self.addNextMove(prevMove, locOfPieceWithPrevMove)
         
         if (self.heuristic == HASH):
             m = 0
@@ -98,39 +98,64 @@ class Node(object):
                 newDict[m] = self.nextMoves[r]
                 m += 1
             self.nextMoves = newDict
-        elif (self.heuristic == BASIC_SORT):
-            if not equalWeights:
+        elif (self.heuristic == BASIC_SORT or self.heuristic == BASIC_SORT_POS):
+            if not self._equalWeights:
                 self.nextMoves = sorted(self.nextMoves, key=lambda x: x.weight, reverse=self.depth % 2 == 0)
             else:
                 random.shuffle(self.nextMoves)
-        elif (self.heuristic == HASH_SORT):
+        elif (self.heuristic == HASH_SORT or self.heuristic == HASH_SORT_POS):
             self.nextMoves = dict(sorted(self.nextMoves.items(), key=lambda x: x[1].weight, reverse=True))
             
             for i in range(0, len(self.nextMoves)):
                 print(self.nextMoves[i].weight)
         else:
             random.shuffle(self.nextMoves)
+            
+
+    def addNextMove(self, m, loc):
+        tempState = Logic.move_piece(self.state, loc[0], loc[1], m)
+        if (tempState != None):
+            tempNode = Node(self.color, tempState, self.depth+1, self.depthLim, self.heuristic, loc, m)
+            
+            if self._equalWeights and len(self.nextMoves) > 0 and tempNode.weight != self.nextMoves[0].weight:
+                self._equalWeights = False
+            
+            if (type(self.nextMoves) == dict):
+                self.nextMoves[n] = tempNode
+                n += 1
+            else:
+                self.nextMoves.append(tempNode)
 
     # Generate how good a move is if node is a leaf node
     def setWeight(self):
     
-        """AI's total piece value compared to opponent's total piece value"""
-        self.weight = (self.state.whiteTotalPieceVal - self.state.blackTotalPieceVal) * 10
-        if (self.color == P.BLACK):
-            self.weight *= -1
-        
-        """Number of moves that AI"""
-        if (self.state.turn == self.color):
-            self.weight += len(self.nextMoves)
-        else:
-            self.weight -= len(self.nextMoves)
-        
-        #if ((self.color == P.WHITE and self.state.blackChecked) or (self.color == P.BLACK and self.state.whiteChecked)):
-        #    self.weight += 1000
-        #elif ((self.color == P.WHITE and self.state.whiteChecked) or (self.color == P.BLACK and self.state.blackChecked)):
-        #    self.weight -= 1000
-        
-        #print(self.move, " -- Piece: ", self.space, " -- Weight: ", self.weight)
+        if (self.heuristic >= BASIC and self.heuristic <= HASH_SORT):
+            """AI's total piece value compared to opponent's total piece value"""
+            self.weight = (self.state.whiteTotalPieceVal - self.state.blackTotalPieceVal) * 10
+            if (self.color == P.BLACK):
+                self.weight *= -1
+            
+            """Number of moves that AI"""
+            if (self.state.turn == self.color):
+                self.weight += len(self.nextMoves)
+            else:
+                self.weight -= len(self.nextMoves)
+        elif (self.heuristic >= BASIC_SORT_POS and self.heuristic <= HASH_SORT_POS):
+            self.weight = (self.state.whitePosPieceVal - self.state.blackPosPieceVal) * 100
+            if (self.color == P.BLACK):
+                self.weight *= -1
+            
+            if (self.state.turn == self.color):
+                self.weight += len(self.nextMoves)
+            else:
+                self.weight -= len(self.nextMoves)
+            
+            #if ((self.color == P.WHITE and self.state.blackChecked) or (self.color == P.BLACK and self.state.whiteChecked)):
+            #    self.weight += 1000
+            #elif ((self.color == P.WHITE and self.state.whiteChecked) or (self.color == P.BLACK and self.state.blackChecked)):
+            #    self.weight -= 1000
+            
+            #print(self.move, " -- Piece: ", self.space, " -- Weight: ", self.weight)
 
     # A quick and dirty copy function
     def copy(self):
@@ -145,6 +170,7 @@ class Node(object):
 def aiSearch(state, depthLim, heuristic):
     global maxNodeDepth
     global totalNodes
+    global prevMove
     
     startTime = time.perf_counter()
     
@@ -172,6 +198,9 @@ def aiSearch(state, depthLim, heuristic):
     
     maxNodeDepth = 0
     totalNodes = 0
+    
+    if (isinstance(node, Node)):
+        prevMove = node.move
     
     return node, endTime - startTime
 

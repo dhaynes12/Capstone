@@ -38,10 +38,29 @@ testCase3 = Logic.move_piece(testCase3, 5, 0, P.Move((2,3)))
 testCase3 = Logic.move_piece(testCase3, 1, 4, P.Move((1,3), P.NON_CAPTURE))
 testCase3 = Logic.move_piece(testCase3, 5, 2, P.Move((5,6)))
 
+testCase4 = B.Board(True)
+testCase4.board[0][0] = P.King(testCase4.whiteKingId, P.WHITE)
+testCase4.board[1][0] = P.Rook(100, P.WHITE)
+testCase4.board[2][0] = P.Rook(101, P.WHITE)
+testCase4.board[2][1] = P.Queen(102, P.BLACK)
+testCase4.board[7][1] = P.Pawn(103, P.WHITE)
+testCase4.board[0][2] = P.Pawn(104, P.WHITE)
+testCase4.board[1][2] = P.Knight(105, P.BLACK)
+testCase4.board[2][3] = P.Knight(106, P.BLACK)
+testCase4.board[4][5] = P.Pawn(107, P.BLACK)
+testCase4.board[1][6] = P.Pawn(108, P.BLACK)
+testCase4.board[6][6] = P.Pawn(109, P.BLACK)
+testCase4.board[7][6] = P.Pawn(110, P.BLACK)
+testCase4.board[2][7] = P.Bishop(111, P.BLACK)
+testCase4.board[3][7] = P.Rook(112, P.BLACK)
+testCase4.board[6][7] = P.King(testCase4.blackKingId, P.BLACK)
+testCase4.unmoved = [103, 108, 109, 110, 111]
+testCase4.initializePosVals()
 
 @pytest.mark.parametrize(
     "b,color,expectedAnswer",
     [
+        (testCase4, P.WHITE, False),
         (testCase1, P.WHITE, False),
         (testCase2, P.WHITE, True),
         (testCase3, P.BLACK, True)
