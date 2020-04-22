@@ -131,7 +131,7 @@ class Node(object):
     
         if (self.heuristic >= BASIC and self.heuristic <= HASH_SORT):
             """AI's total piece value compared to opponent's total piece value"""
-            self.weight = (self.state.whiteTotalPieceVal - self.state.blackTotalPieceVal) * 10
+            self.weight = (self.state.whiteTotalPieceVal - self.state.blackTotalPieceVal) * 100
             if (self.color == P.BLACK):
                 self.weight *= -1
             
@@ -140,13 +140,13 @@ class Node(object):
                 self.weight += len(self.nextMoves)
             else:
                 self.weight -= len(self.nextMoves)
-        elif (self.heuristic >= BASIC_SORT_POS and self.heuristic <= HASH_SORT_POS):
-            self.weight = (self.state.whitePosPieceVal - self.state.blackPosPieceVal) * 100
+        elif (self.heuristic >= NEGMAX_POS and self.heuristic <= HASH_SORT_POS):
+            self.weight = (self.state.whitePosPieceVal - self.state.blackPosPieceVal) * 1000
             if (self.color == P.BLACK):
                 self.weight *= -1
             
             if (self.state.turn == self.color):
-                self.weight += len(self.nextMoves)
+                self.weight += (len(self.nextMoves))
             else:
                 self.weight -= len(self.nextMoves)
             
