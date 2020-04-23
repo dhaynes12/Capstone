@@ -166,7 +166,7 @@ class Node(object):
         newNode.weight = self.weight
         return newNode
 
-
+# AI search starting point using a start state, some depth limit and heurisitc
 def aiSearch(state, depthLim, heuristic):
     global maxNodeDepth
     global totalNodes
@@ -175,15 +175,17 @@ def aiSearch(state, depthLim, heuristic):
     startTime = time.perf_counter()
     
     tempNode = Node(state.turn, state, 0, depthLim, heuristic) 
+    # Best move list to be used in future move ordering
     bestMoveLst = [tempNode]
     
-    # Change herusitic value to 3 later
+    # Irerative deepening negamax search with AB pruning
     if heuristic == NEGMAX or heuristic == NEGMAX_POS:
         for i in range(1, depthLim + 1):
             tempNode.depthLim = i
             value, node = ABNegPruning(tempNode, -math.inf, math.inf, bestMoveLst)
             bestMoveLst.append(node.state)
             #print("Current best move:", node.state, "\nCurrent best score:", value, "\nTotal Nodes:", totalNodes)
+    # Min-Max search with AB pruning
     else:
         value, node = ABPruning(tempNode, -math.inf, math.inf)
         print(value)
@@ -204,17 +206,23 @@ def aiSearch(state, depthLim, heuristic):
     
     return node, endTime - startTime
 
-
+# Alpha beta pruning
+# Recursive funtion that generates the tree and prunes off moves using Alpha and Beta values
 def ABPruning (node, alpha, beta, nullMV = True):
     node.alpha = alpha
     node.beta = beta
     nextMove = None
     
+    # End case to return a heuristic value
     if node.depth == node.depthLim:
         return node.weight, nextMove
+
+    # Generating next moves
     node.genNextMoves()
     if len(node.nextMoves) == 0:
         return endStateCheck(node, nextMove)
+    # Going down the moves and seeing values returned and if they make the alpha or beta cutoff.
+    # Even depth is max, Odd is min
     elif node.depth % 2 == 1:
         for n in node.nextMoves:
             tempVal, jnkState = ABPruning(n, node.alpha, node.beta)
@@ -225,27 +233,14 @@ def ABPruning (node, alpha, beta, nullMV = True):
                 break
         return node.beta, nextMove
     else:
-        node.genNextMoves()
-        if len(node.nextMoves) == 0:
-            return endStateCheck(node, nextMove)
-        elif node.depth % 2 == 1:
-            for i in range(0, len(node.nextMoves)):
-                tempVal, jnkState = ABPruning(node.nextMoves[i], node.alpha, node.beta)
-                if tempVal < node.beta:
-                    node.beta = tempVal
-                    nextMove = node.nextMoves[i]
-                if node.beta <= node.alpha:
-                    break
-            return node.beta, nextMove
-        else:
-            for i in range(0, len(node.nextMoves)):
-                tempVal, jnkState = ABPruning(node.nextMoves[i], node.alpha, node.beta)
-                if tempVal > node.alpha:
-                    node.alpha = tempVal
-                    nextMove = node.nextMoves[i]
-                if node.beta <= node.alpha:
-                    break
-            return node.alpha, nextMove
+        for i in range(0, len(node.nextMoves)):
+            tempVal, jnkState = ABPruning(node.nextMoves[i], node.alpha, node.beta)
+            if tempVal > node.alpha:
+                node.alpha = tempVal
+                nextMove = node.nextMoves[i]
+            if node.beta <= node.alpha:
+                break
+        return node.alpha, nextMove
  
 def endStateCheck(node, nextMove):
     whiteCheckmate = Logic.is_checkmate(node.state, P.WHITE)
@@ -269,6 +264,7 @@ def checkZugzwang (node):
     return True
 
 # nullMV is a variable to prevent nullmoves from chaining
+# Same as ABPruining but has Null move pruning implmented and reverses bounds so that each level is a max level.
 def ABNegPruning (node, alpha, beta, bestMoveLst, nullMV = True):
     node.alpha = alpha
     node.beta = beta
@@ -293,9 +289,9 @@ def ABNegPruning (node, alpha, beta, bestMoveLst, nullMV = True):
                 tempVal, jnkState = ABNegPruning(node, -(1000001), -(1000000), bestMoveLst, False)
             else:
                 tempVal, jnkState = ABNegPruning(node, -(beta), -(beta+1), bestMoveLst,  False)
+
             #print (tempVal, "beta:", beta)
             # if someNum is >= beta the return beta
-            # need to figure out if I need to negate the tempVal
             if tempVal >= beta:
                 #print("I just Null Pruned! on beta")
                 return beta, nextMove 
