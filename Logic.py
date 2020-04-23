@@ -16,7 +16,6 @@ def move_piece(state, selX, selY, move):
             st.whiteTotalPieceVal -= st.board[move.x()][move.y()].value
         elif st.board[move.x()][move.y()].color == P.BLACK:
             st.blackTotalPieceVal -= st.board[move.x()][move.y()].value
-            st.blackPosPieceVal -= st.board[move.x()][move.y()].value
         st.undoPositionalPieceVal(st.board[move.x()][move.y()], move.x(), move.y())
     
     st.board[move.x()][move.y()] = st.board[selX][selY]
@@ -160,7 +159,7 @@ def is_checkmate(state, color):
         if (len(oppPieces) > 1):
             raise Exception("Somehow multiple pieces directly endangered the King, which would only happen if the King finished its turn still in check")
         
-        if (len(oppPieces) == 0) or ((type(oppPieces[0]) == P.Knight or type(oppPieces[0]) == P.Pawn) and oppSpaces[0] in friendMoves):
+        if (len(oppPieces) == 0) or oppSpaces[0] in friendMoves:
             checkmate = False
         elif (type(oppPieces[0]) == P.Queen or type(oppPieces[0]) == P.Rook or type(oppPieces[0]) == P.Bishop):
             for between in betweenSpaces(state, kingSpace, oppSpaces[0]):

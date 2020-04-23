@@ -54,3 +54,30 @@ Average think time: 1.33 seconds
 Lowest think time: 2.71 seconds
 Highest think time: 60.50 seconds
 Average think time: 23.98 seconds
+
+### 3, Depth 4
+Lowest think time: 1.99 seconds
+Highest think time: 73.37 seconds
+Average think time: 14.63 seconds
+Stalemated
+
+### 5, Depth 4
+Lowest think time: 9.95 seconds
+Highest think time: 97.61 seconds
+Average think time: 39.72 seconds
+
+### 6, Depth 3
+Lowest think time: 2.86 seconds
+Highest think time: 56.58 seconds
+Average think time: 18.14 seconds
+
+# AI vs AI
+### 2 vs 6
+2 White, 6 Black:
+* Stalemate in 66 turns, 2 has piece advantage
+* White Piece Val: 38
+* Black Piece Val: 33.5
+6 White, 2 Black:
+* Stalemate in 61 turns, 1 has piece advantage
+* White Piece Val: 28
+* Black Piece Val: 27.5
