@@ -84,6 +84,30 @@ crash4.blackChecked = True
 crash4.unmoved = []
 crash4.initializePosVals()
 
+crash5 = B.Board(True)
+crash5.board[0][3] = P.Pawn(100, P.WHITE)
+crash5.board[0][4] = P.Queen(101, P.BLACK)
+crash5.board[0][6] = P.Pawn(102, P.BLACK)
+crash5.board[1][0] = P.Knight(103, P.WHITE)
+crash5.board[1][6] = P.Pawn(104, P.BLACK)
+crash5.board[2][2] = P.Rook(105, P.WHITE)
+crash5.board[2][4] = P.Pawn(106, P.BLACK)
+crash5.board[3][2] = P.Knight(107, P.WHITE)
+crash5.board[3][6] = P.Rook(108, P.BLACK)
+crash5.board[4][0] = P.Rook(109, P.WHITE)
+crash5.board[4][6] = P.Bishop(110, P.BLACK)
+crash5.board[4][7] = P.King(crash5.blackKingId, P.BLACK)
+crash5.board[5][6] = P.Pawn(111, P.BLACK)
+crash5.board[5][7] = P.Queen(112, P.WHITE)
+crash5.board[6][1] = P.Pawn(113, P.WHITE)
+crash5.board[6][6] = P.Queen(114, P.WHITE)
+crash5.board[7][0] = P.King(crash5.whiteKingId, P.WHITE)
+crash5.board[7][1] = P.Pawn(115, P.WHITE)
+crash5.blackChecked = True
+crash5.turn = P.BLACK
+crash5.unmoved = [102, 104, 111, 113, 115]
+crash5.initializePosVals()
+
 @pytest.mark.parametrize(
     "state,depthLim,heuristic",
     [
@@ -98,6 +122,7 @@ def test_move_return(state, depthLim,heuristic):
 @pytest.mark.parametrize(
     "state,aicolor,depthLim,heuristic",
     [
+        (crash5, P.BLACK, 3, 6),
         (crash4, P.BLACK, 3, 0),
         (crash3, P.WHITE, 3, 0),
         (crash2, P.BLACK, 3, 0),

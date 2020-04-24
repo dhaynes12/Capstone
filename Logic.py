@@ -159,8 +159,13 @@ def is_checkmate(state, color):
         if (len(oppPieces) > 1):
             raise Exception("Somehow multiple pieces directly endangered the King, which would only happen if the King finished its turn still in check")
         
-        if (len(oppPieces) == 0) or oppSpaces[0] in friendMoves:
+        if (len(oppPieces) == 0):
             checkmate = False
+        elif oppSpaces[0] in friendMoves:
+            for move in friendMoves:
+                if move.space == oppSpaces[0] and move_piece(state, move.originX(), move.originY(), move) != None:
+                    checkmate = False
+                    break
         elif (type(oppPieces[0]) == P.Queen or type(oppPieces[0]) == P.Rook or type(oppPieces[0]) == P.Bishop):
             for between in betweenSpaces(state, kingSpace, oppSpaces[0]):
                     if between in friendMoves:

@@ -617,6 +617,8 @@ def gameMain():
                 crash = True
                 state = a.state
                 crashedColor = P.colorToStr(a.aiColor)
+                print()
+                print("EXCEPTION")
                 print(a)
         elif updateCycle:
             extraCycle = True

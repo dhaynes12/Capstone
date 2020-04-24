@@ -30,6 +30,8 @@ All chess symbols by Cburnett is licensed under [CC BY-SA3.0](https://creativeco
 * [Chess ndt45.svg](https://en.wikipedia.org/wiki/File:Chess_ndt45.svg)
 * [Chess pdt45.svg](https://en.wikipedia.org/wiki/File:Chess_pdt45.svg)
 
+The matrixes of positional values that are used by some heuristics was written by Tomasz Michniewski, and was posted on [Simplified_Evaluation_Function](https://www.chessprogramming.org/Simplified_Evaluation_Function) under [CC BY-SA3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.en).
+
 # Citations
 https://www.quora.com/What-are-some-heuristics-for-quickly-evaluating-chess-positions
 
@@ -72,12 +74,29 @@ Highest think time: 56.58 seconds
 Average think time: 18.14 seconds
 
 # AI vs AI
-### 2 vs 6
+### 2 vs 6, original
 2 White, 6 Black:
-* Stalemate in 66 turns, 2 has piece advantage
+* Infinite loop in 66 turns, 2 has piece advantage
 * White Piece Val: 38
 * Black Piece Val: 33.5
 6 White, 2 Black:
-* Stalemate in 61 turns, 1 has piece advantage
+* Infinite loop in 61 turns, 1 has piece advantage
 * White Piece Val: 28
 * Black Piece Val: 27.5
+
+### 5 vs 6
+5 White, 6 Black:
+* 6 checkmates 5 in 58 turns.
+* 5 made really poor, short-sighted moves.
+* White Piece Val: 40
+* Black Piece Val: 0
+
+### 2 vs 6, slight improvement
+2 White, 6 Black:
+* 6 checkmates 2 in 54 turns.
+* White Piece Val: 17.5
+* Black Piece Val: 27
+6 White, 2 Black:
+* Infinite loop in 94 turns, 6 has advantage
+* White Piece Val: 18
+* Black Piece Val: 23
