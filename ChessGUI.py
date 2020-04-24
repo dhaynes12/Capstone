@@ -157,6 +157,7 @@ def blackAI():
     global blackPlayer
     blackPlayer = AI
 
+# Funtions for highlighting squares
 def selectSpace(coords):
     global state
     global selectMoves
@@ -172,6 +173,7 @@ def selectSpaceHuman(coords):
     if (state.turn == P.WHITE and whitePlayer == HUMAN) or (state.turn == P.BLACK and blackPlayer == HUMAN):    
         selectSpace(coords)
 
+# Funtion to make a move on the board
 def makeMove(moveCoords):
     global state
     global selectMoves
@@ -206,8 +208,7 @@ def startGame(args):
     global whitePlayer
     global blackPlayer
 
-    # Might need to change this to display constantly if clicked
-    # This means i need a variable to toggle it
+    # Checking to make sure radio buttons on each side have been clicked
     if whitePlayer is None or blackPlayer is None:
         text = pygame.font.SysFont("agencyfb",25)
         TextSurf, TextRect = textObjects("Please select Human or AI for both sides", text)
@@ -224,8 +225,6 @@ def startGame(args):
         TextRect.center = ((display_width/2),(display_height/2))
         gameDisplay.blit(TextSurf, TextRect)
     else:
-        #STUB might need to fix
-        #Add Values for the AI into some sort of check
         gameMain()
 
 def gameIntro():
@@ -236,12 +235,12 @@ def gameIntro():
     
     intro = True
     
-    # Input textbox initializations
     whiteDepthID = 0
     blackDepthID = 1
     whiteHeurID = 2
     blackHeurID = 3
     
+    # Input textbox initializations
     inputBox1 = InputBox(200, 425, 50, 50, black, red, text=str(whiteDepth), ident=whiteDepthID)
     inputBox2 = InputBox(550, 425, 50, 50, black, red, text=str(blackDepth), ident=blackDepthID)
     inputBox3 = InputBox(275, 425, 50, 50, black, red, text=str(whiteHeuristic), ident=whiteHeurID)
@@ -255,6 +254,8 @@ def gameIntro():
                 quit()
             for box in inputBoxes:
                 box.handle_event(event)
+
+        # Input textboxes updating
         for box in inputBoxes:
             box.update()
             if (box.ident == whiteDepthID):
@@ -265,6 +266,8 @@ def gameIntro():
                 whiteHeuristic = int(box)
             elif (box.ident == blackHeurID):
                 blackHeuristic = int(box)
+
+        # Title Text
         gameDisplay.fill(white)
         largeText = pygame.font.SysFont("agencyfb",115)
         TextSurf, TextRect = textObjects("Chess AI", largeText)
@@ -353,6 +356,7 @@ def gameIntro():
         pygame.display.update()
         clock.tick(15)
 
+# Function to display gamepieces
 def chessPiece(x, y, img):
     gameDisplay.blit(img,(x,y))
 
@@ -360,6 +364,7 @@ def getCords(args):
     for x in args:
         print(args)
 
+# Function to display the bottom left and right during the game
 def gameInfoText(player, depth, heuristic, xPos, color):
     text = pygame.font.SysFont("agencyfb",22)
     
@@ -384,6 +389,7 @@ def gameInfoText(player, depth, heuristic, xPos, color):
         TextRect.topleft = (xPos,550)
         gameDisplay.blit(TextSurf, TextRect)
 
+# Funtion to display the end results in the consol.
 def printResults(checkmate, state):
     endTime = time.perf_counter()
     
@@ -451,8 +457,10 @@ def printResults(checkmate, state):
             
             
     
-
+# Main Game function
 def gameMain():
+
+    # A bunch of global variables to track various things.
     global state
     global selectMoves
     global whitePlayer
@@ -495,7 +503,7 @@ def gameMain():
         #Right-side Info
         gameInfoText(blackPlayer, blackDepth, blackHeuristic, 700, "Black")
         
-        # Add double for loop to make array of buttons
+        # Double loop to make array of buttons
         for x in range(0, 8):
             for y in range(0, 8):
                 if (x,y) in selectMoves:
@@ -528,12 +536,14 @@ def gameMain():
                     img = pygame.image.load(state.board[x][y].image)
                     chessPiece((x * 45 + 220),(435 - y * 45),img)
 
-        # Printing text to indicate check or checkmate
+        # Ouput text for a unexpected crash
         if crash:
             text = pygame.font.SysFont("agencyfb",25)
             TextSurf, TextRect = textObjects("Oops, the " + crashedColor + " AI thought of this state, causing a crash.", text)
             TextRect.center = ((display_width/2),(display_height/8))
             gameDisplay.blit(TextSurf, TextRect)
+
+        # Printing text to indicate check or checkmate
         elif state.whiteChecked:
             if Logic.is_checkmate(state,state.turn) == True or checkmate == True:
                 text = pygame.font.SysFont("agencyfb",25)
